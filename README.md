@@ -1,3 +1,3 @@
-Here is the initial wireframe for the project:
+Here is the initial wire frame for the project:
 
-(journaling/pictures/"UFOMT initial mapping.png")
+![Initial wire frame](journaling/pictures/UFOMT%20initial%20mapping.png)
