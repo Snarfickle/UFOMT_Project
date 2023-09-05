@@ -1,0 +1,6 @@
+9.1.2023
+met with the management to talk about the database and the type of project that they needed built. 
+
+9.5.2023
+worked on excalidraw and mapped out the bare bones of the project. See below: 
+![backend wireframe](pictures/UFOMT.png)
