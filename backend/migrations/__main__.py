@@ -35,31 +35,5 @@ async def migrate():
 if __name__ == "__main__":
     from asyncio import run
 
-    # from psycopg_pool import ConnectionPool
-    # import os
-
-    # try:
-    #     pool = ConnectionPool(conninfo=os.environ["DATABASE_URL"])
-    #     with pool.connection() as conn:
-    #         with conn.cursor() as db:
-    #             db.execute(
-    #                 """
-    #                 DROP TABLE messages;
-    #                 DROP TRIGGER IF EXISTS writer_check ON resources;
-    #                 DROP FUNCTION IF EXISTS check_writer_is_therapist;
-    #                 DROP TABLE resources;
-    #                 DROP TRIGGER IF EXISTS appointee_check ON appointments;
-    #                 DROP FUNCTION IF EXISTS check_therapist_id_is_therapist;
-    #                 DROP TABLE appointments;
-    #                 DROP TABLE journals;
-    #                 DROP TYPE mood;
-    #                 DROP TABLE jotters;
-    #                 DROP TYPE user_type;
-    #                 DELETE FROM migrations;
-    #                 """,
-    #             )
-    # except Exception as e:
-    #     print("Error while deleting database")
-    #     print(e)
     run(migrate())
     print("Migrations have run.")

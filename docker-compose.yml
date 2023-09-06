@@ -1,20 +1,23 @@
-version: '3.8'
+volumes:
+  ufomt_data:
+    external: true
 
 services:
   db:
     image: postgres:14.5-bullseye
     environment:
-      - POSTGRES_DB=backend
-      - POSTGRES_USER=user
-      - POSTGRES_PASSWORD=password
+      POSTGRES_DB: backend
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
     ports:
       - "15432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - ufomt_data:/var/lib/postgresql/data
     
   backend:
-    build: ./backend
-    # command: ["./wait-for-it.sh", "db:5432", "--", "python", "your_app_script.py"] working on this!!
+    build:
+      context: ./backend
+      dockerfile: ./Dockerfile.dev
     environment:
       DATABASE_URL: postgresql://user:password@db/backend
       WAIT_HOSTS: db:5432
@@ -22,6 +25,9 @@ services:
       SIGNING_KEY: WorkingOnThisOne
     ports:
       - "8000:80"
+    volumes:
+      - ./backend:/app
+
   frontend:
     image: node:lts-bullseye
     command: /bin/bash run.sh
@@ -37,7 +43,3 @@ services:
       HOST: "0.0.0.0"
       PUBLIC_URL: http://localhost:3000
       REACT_APP_HOST: http://localhost:8000
-
-
-volumes:
-  postgres_data:
