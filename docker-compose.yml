@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:14.5-bullseye
+    environment:
+      - POSTGRES_DB=backend
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+    ports:
+      - "15432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    
+  backend:
+    build: ./backend
+    # command: ["./wait-for-it.sh", "db:5432", "--", "python", "your_app_script.py"] working on this!!
+    environment:
+      DATABASE_URL: postgresql://user:password@db/backend
+      WAIT_HOSTS: db:5432
+      PORT: 8000
+      SIGNING_KEY: WorkingOnThisOne
+    ports:
+      - "8000:80"
+  frontend:
+    image: node:lts-bullseye
+    command: /bin/bash run.sh
+    build: ./frontend
+    working_dir: /app
+    volumes:
+      - ./frontend:/app
+    ports:
+      - "3000:3000"
+    environment:
+      HOST_OS: ${OS}
+      NODE_ENV: development
+      HOST: "0.0.0.0"
+      PUBLIC_URL: http://localhost:3000
+      REACT_APP_HOST: http://localhost:8000
+
+
+volumes:
+  postgres_data:
