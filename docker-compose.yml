@@ -22,7 +22,7 @@ services:
       DATABASE_URL: postgresql://user:password@db/backend
       WAIT_HOSTS: db:5432
       PORT: 8000
-      SIGNING_KEY: WorkingOnThisOne
+      SIGNING_KEY: mQd1bQ2jIBJv5eOXJOe48moBUxdEJMn30TcYaK5gqGY
     ports:
       - "8000:80"
     volumes:
