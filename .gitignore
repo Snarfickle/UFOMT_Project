@@ -49,3 +49,6 @@ yarn-error.log*
 
 # Docker volumes
 *.data/
+
+#general files to be ignored for security reasons
+backend/start_file.py

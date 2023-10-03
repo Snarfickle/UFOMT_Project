@@ -19,10 +19,17 @@ from routers import (
 )
 from auth_utils.auth_utils import token_encoder, Token
 from queries.app_user_query import AppUserRepo
+import bcrypt
+from start_file import create_initial_user
+
 
 app = FastAPI()
 
-import bcrypt
+
+@app.on_event("startup")
+async def startup_event():
+    # Your script logic here
+    create_initial_user()
 
 def hash_password(plain_password: str) -> str:
     # '''Hash a password for storing.'''
