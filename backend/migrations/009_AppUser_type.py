@@ -9,11 +9,11 @@ steps = [
     );
 
     INSERT INTO UserType (type, description) VALUES
-    ('teacher', 'Teacher type user'),
-    ('student', 'Student type user'),
-    ('OBC', 'OBC type user'),
-    ('staff', 'Staff type user'),
-    ('administration', 'Administration type user');
+    ('Teacher', 'Teachers are able to create and read for schools, districts, classrooms. Event_dates, event_programs are read only'),
+    ('Student', 'Students are able to create and read for schools, districts, classrooms. Event_dates, event_programs are read only'),
+    ('OBC', 'Opera By Children Staff (OBC) able to create, read, list, and update for schools, districts, classrooms, event_dates, event_programs'),
+    ('Staff', 'Front office staff are able to create, read, update, and list for tickets'),
+    ('Administration', 'Administration are able to use all permissions for all tables');
     
     COMMIT;
     """, 

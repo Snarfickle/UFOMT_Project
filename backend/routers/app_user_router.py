@@ -2,6 +2,13 @@ from fastapi import APIRouter, Depends, HTTPException
 from typing import Union, List, Dict
 from queries.app_user_query import AppUserIn, AppUserOut, AppUserRepo
 # from authenticator import authenticator
+import bcrypt
+from auth_utils.auth_utils import get_current_user
+
+def hash_password(plain_password: str) -> str:
+    '''Hash a password for storing.'''
+    salt = bcrypt.gensalt()
+    return bcrypt.hashpw(plain_password.encode('utf-8'), salt).decode('utf-8')
 
 router = APIRouter()
 
@@ -11,6 +18,9 @@ def create_app_user(
     user: AppUserIn,
     repo: AppUserRepo = Depends(AppUserRepo)
 ):
+    user.password = hash_password(user.password)
+    user.username = user.username.lower()
+
     result = repo.create_app_user(user)
     if "error" in result:
         raise HTTPException(status_code=400, detail=result["error"])
@@ -34,6 +44,7 @@ def update_app_user(
     user: AppUserIn,
     repo: AppUserRepo = Depends(AppUserRepo)
 ):
+    user.password = hash_password(user.password)
     result = repo.update_app_user(user_id, user)
     if "error" in result:
         raise HTTPException(status_code=404, detail=result["error"])
@@ -52,7 +63,11 @@ def delete_app_user(
 
 # Endpoint to list all AppUsers
 @router.get("/app-users", response_model=List[AppUserOut])
-def list_app_users(
-    repo: AppUserRepo = Depends(AppUserRepo)
+async def list_app_users(
+    repo: AppUserRepo = Depends(AppUserRepo),
+    current_user: AppUserIn = Depends(get_current_user)
 ):
+    if current_user.type_id < 3: # need to implement a user file to help control the level of access to each user. 
+        raise HTTPException(status_code=401, detail="Invalid user type")
     return repo.list_app_users()
+    

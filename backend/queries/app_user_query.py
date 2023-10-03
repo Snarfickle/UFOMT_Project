@@ -6,6 +6,8 @@ from psycopg.rows import dict_row
 
 # Input model for AppUser
 class AppUserIn(BaseModel):
+    username: str
+    password: str
     type_id: int
     first_name: str
     last_name: str
@@ -41,7 +43,10 @@ class AppUserRepo:
                 db.execute(
                     """
                     INSERT INTO app_user (
-                        type_id, first_name,
+                        username, 
+                        password,
+                        type_id,
+                        first_name,
                         last_name,
                         email,
                         phone_number,
@@ -60,10 +65,12 @@ class AppUserRepo:
                         state,
                         zip
                     )
-                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                     RETURNING *;
                     """,
                     [
+                        user.username,
+                        user.password,
                         user.type_id,
                         user.first_name,
                         user.last_name,
@@ -112,6 +119,8 @@ class AppUserRepo:
                     """
                     UPDATE app_user
                     SET 
+                    username = %s,
+                    password = %s,
                     type_id = %s,
                     first_name = %s,
                     last_name = %s,
@@ -135,6 +144,8 @@ class AppUserRepo:
                     RETURNING *;
                     """,
                     [
+                        user.username,
+                        user.password,
                         user.type_id,
                         user.first_name,
                         user.last_name,
@@ -188,3 +199,17 @@ class AppUserRepo:
                 )
                 records = db.fetchall()
                 return [AppUserOut(**record) for record in records]
+    def get_user_by_username(self, username: str) -> Optional[AppUserOut]:
+        with pool.connection() as conn:
+            with conn.cursor(row_factory=dict_row) as db:
+                db.execute(
+                    """
+                    SELECT * FROM app_user
+                    WHERE username = %s;
+                    """,
+                    [username]
+                )
+                record = db.fetchone()
+                if record is None:
+                    return None
+                return AppUserOut(**record)

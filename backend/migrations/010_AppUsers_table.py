@@ -5,12 +5,12 @@ steps = [
     CREATE TABLE app_user (
         -- Below is for each user to have
         user_id SERIAL PRIMARY KEY,
+        username VARCHAR(200) UNIQUE NOT NULL,
+        password TEXT NOT NULL,
         type_id INTEGER REFERENCES UserType(type_id),
         first_name VARCHAR(100) NOT NULL,
         last_name VARCHAR(100) NOT NULL,
         email VARCHAR(100) UNIQUE NOT NULL,
-        password TEXT NOT NULL,
-        username VARCHAR(200) UNIQUE NOT NULL,
         phone_number BIGINT NOT NULL,
         created_date DATE DEFAULT CURRENT_DATE,
         terminated_date DATE,
