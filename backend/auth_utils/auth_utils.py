@@ -32,7 +32,7 @@ def decode_token(token: str):
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         user_id: int = payload.get("user_id")
         if user_id is None:
-            raise credentials_exception
+            raise TypeError(message="user_id is None")
         return user_id
     except:
         raise HTTPException(status_code=401, detail="Invalid token")
