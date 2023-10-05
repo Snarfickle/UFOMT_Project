@@ -1,11 +1,11 @@
 from pydantic import BaseModel
 import jwt
 from datetime import datetime, timedelta
-from fastapi import HTTPException, Depends, Security
+from fastapi import HTTPException, Depends, Request
 from fastapi.security import OAuth2PasswordBearer
-from typing import Annotated
 from queries.app_user_query import AppUserRepo, AppUserIn
-
+from functools import wraps
+from typing import Optional
 # JWT Configurations
 SECRET_KEY = "your_super_secret_key"  # TODO: Use a secure random key
 ALGORITHM = "HS256"
@@ -18,6 +18,8 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     user_id: int
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
 # Function to encode the user data into a JWT token
@@ -34,31 +36,66 @@ def decode_token(token: str):
         if user_id is None:
             raise TypeError(message="user_id is None")
         return user_id
-    except:
+    except jwt.DecodeError:
+        raise HTTPException(status_code=401, detail="Invalid token - DecodeError")
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="Token has expired")
+    except jwt.InvalidTokenError:
         raise HTTPException(status_code=401, detail="Invalid token")
 
-# OAuth2PasswordBearer instance for token extraction
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 # Dependency to get the current user from the token
-def get_current_user(token: str = Depends(oauth2_scheme), repo: AppUserRepo = Depends(AppUserRepo)) -> AppUserIn:
-    """
-    Decode the JWT token and retrieve the user details.
-    """
+async def get_current_user(
+        token: Optional[str] = Depends(oauth2_scheme)) -> Optional[AppUserIn]:
+
+    repo = AppUserRepo()
+
+    if not token:
+        return None  # Return None if no token is provided
     try:
         # Decoding the JWT token to get the user_id.
         user_id = decode_token(token)
-        
         # Fetch the user details from the database using the decoded user_id.
         user = repo.get_app_user(user_id) 
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
-        
         return user
 
     except jwt.ExpiredSignatureError:
         raise HTTPException(status_code=401, detail="Token has expired")
     except jwt.InvalidTokenError:
-        raise HTTPException(status_code=401, detail="Invalid token")
+        raise HTTPException(status_code=401, detail="Invalid token raisins!")
     except Exception as e:
-        raise
+        raise e
+
+def requires_permission(action: str, resource: str):
+
+    async def check_permission(request: Request):
+        token = request.headers.get("Authorization")
+        
+        if token is None or not token.startswith("Bearer "):
+            raise HTTPException(status_code=401, detail="Authorization token is missing")
+        token_str = token.split(" ")[1]
+        current_user = await get_current_user(token_str)
+        if current_user is None:
+            raise HTTPException(status_code=401, detail="Unauthorized")
+        
+        repo = AppUserRepo()
+        has_permission = repo.check_permission_query(current_user.type_id, action, resource)
+        print("check_permission: ",has_permission)
+        print("current user: ",current_user.type_id,"action: ", action,"resource: ", resource)
+
+        if not has_permission:
+            raise HTTPException(status_code=401, detail="Access Forbidden: Insufficient Permissions")
+        return current_user
+
+    def decorator(route_function):
+        @wraps(route_function)
+        async def secure_route(*args, **kwargs):
+            request = kwargs.get("request")
+            await check_permission(request)
+            result = route_function(*args, **kwargs)
+            return result
+        return secure_route
+    
+    return decorator

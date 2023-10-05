@@ -16,6 +16,7 @@ from routers import (
     event_date_table_router,
     tickets_status_router,
     tickets_table_router,
+    admin_user_router,
 )
 from auth_utils.auth_utils import token_encoder, Token
 from queries.app_user_query import AppUserRepo
@@ -49,7 +50,7 @@ def login_for_access_token(username: str = Form(...), password: str = Form(...),
     access_token = token_encoder(user_id=user.user_id)
     return {"access_token":access_token, "token_type":"bearer"}
 
-
+app.include_router(admin_user_router.router) #/admin-users, used to create admin, staff or OBC users. 
 app.include_router(schools_router.router) #/schools/{school_id}
 app.include_router(school_type_router.router) #/schooltypes/{type_id}
 app.include_router(school_genre_router.router) #/schoolgenres/{genre_id}

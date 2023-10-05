@@ -36,6 +36,7 @@ class AppUserOut(AppUserIn):
 
 
 class AppUserRepo:
+
     def create_app_user(self, user: AppUserIn) -> Union[AppUserOut, dict]:
         with pool.connection() as conn:
             with conn.cursor(row_factory=dict_row) as db:
@@ -213,3 +214,21 @@ class AppUserRepo:
                 if record is None:
                     return None
                 return AppUserOut(**record)
+    def check_permission_query(self, user_type_id: int, action: str, resource: str) -> bool:
+        with pool.connection() as conn:
+            with conn.cursor(row_factory=dict_row) as db:
+                # SQL query to check permission
+                db.execute(
+                    """
+                    SELECT can_access FROM permission
+                    JOIN action ON permission.action_id = action.action_id
+                    JOIN resource ON permission.resource_id = resource.resource_id
+                    WHERE permission.type_id = %s AND resource.name = %s AND action.name = %s;
+                    """,
+                    [user_type_id, resource, action]
+                )
+                record = db.fetchone()
+                # If no record is found or can_access is False, return False
+                if record is None or not record['can_access']:
+                    return False
+                return True

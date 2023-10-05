@@ -1,15 +1,19 @@
-from fastapi import APIRouter, Depends, HTTPException
-from typing import Union, List, Dict
+from fastapi import APIRouter, Depends, HTTPException, Request
+from typing import List
 from queries.tickets_table_query import TicketIn, TicketOut, TicketRepo
-# from authenticator import authenticator
+from auth_utils.auth_utils import requires_permission, get_current_user
+from queries.app_user_query import AppUserIn
 
 router = APIRouter()
 
 # Endpoint to create a new Ticket
 @router.post("/tickets", response_model=TicketOut)
+@requires_permission(action="create", resource="tickets")
 def create_ticket(
+    request: Request,
     ticket: TicketIn,
-    repo: TicketRepo = Depends(TicketRepo)
+    repo: TicketRepo = Depends(TicketRepo),
+    current_user: AppUserIn = Depends(get_current_user)
 ):
     result = repo.create_ticket(ticket)
     if "error" in result:
@@ -18,9 +22,12 @@ def create_ticket(
 
 # Endpoint to fetch a Ticket by its ID
 @router.get("/tickets/{ticket_id}", response_model=TicketOut)
+@requires_permission(action="create", resource="tickets")
 def read_ticket(
+    request: Request,
     ticket_id: int,
-    repo: TicketRepo = Depends(TicketRepo)
+    repo: TicketRepo = Depends(TicketRepo),
+    current_user: AppUserIn = Depends(get_current_user)
 ):
     result = repo.get_ticket(ticket_id)
     if "error" in result:
@@ -29,10 +36,13 @@ def read_ticket(
 
 # Endpoint to update a Ticket by its ID
 @router.put("/tickets/{ticket_id}", response_model=TicketOut)
+@requires_permission(action="create", resource="tickets")
 def update_ticket(
+    request: Request,
     ticket_id: int,
     ticket: TicketIn,
-    repo: TicketRepo = Depends(TicketRepo)
+    repo: TicketRepo = Depends(TicketRepo),
+    current_user: AppUserIn = Depends(get_current_user)
 ):
     result = repo.update_ticket(ticket_id, ticket)
     if "error" in result:
@@ -41,9 +51,12 @@ def update_ticket(
 
 # Endpoint to delete a Ticket by its ID
 @router.delete("/tickets/{ticket_id}", response_model=dict)
+@requires_permission(action="create", resource="tickets")
 def delete_ticket(
+    request: Request,
     ticket_id: int,
-    repo: TicketRepo = Depends(TicketRepo)
+    repo: TicketRepo = Depends(TicketRepo),
+    current_user: AppUserIn = Depends(get_current_user)
 ):
     result = repo.delete_ticket(ticket_id)
     if "error" in result:
@@ -52,7 +65,10 @@ def delete_ticket(
 
 # Endpoint to list all Tickets
 @router.get("/tickets", response_model=List[TicketOut])
+@requires_permission(action="create", resource="tickets")
 def list_tickets(
-    repo: TicketRepo = Depends(TicketRepo)
+    request: Request,
+    repo: TicketRepo = Depends(TicketRepo),
+    current_user: AppUserIn = Depends(get_current_user)
 ):
     return repo.list_tickets()

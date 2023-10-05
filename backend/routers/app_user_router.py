@@ -1,12 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException
-from typing import Union, List, Dict
+from fastapi import APIRouter, Depends, HTTPException, Request
+from typing import List, Optional
 from queries.app_user_query import AppUserIn, AppUserOut, AppUserRepo
 # from authenticator import authenticator
 import bcrypt
-from auth_utils.auth_utils import get_current_user
+from auth_utils.auth_utils import requires_permission, get_current_user, oauth2_scheme, decode_token
 
 def hash_password(plain_password: str) -> str:
-    '''Hash a password for storing.'''
     salt = bcrypt.gensalt()
     return bcrypt.hashpw(plain_password.encode('utf-8'), salt).decode('utf-8')
 
@@ -20,6 +19,10 @@ def create_app_user(
 ):
     user.password = hash_password(user.password)
     user.username = user.username.lower()
+            
+    if user.type_id > 2:
+        print("User type is higher than student or teacher!")
+        raise HTTPException(status_code=403, detail="User not authorized to create this user type")
 
     result = repo.create_app_user(user)
     if "error" in result:
@@ -28,9 +31,12 @@ def create_app_user(
 
 # Endpoint to fetch an AppUser by its ID
 @router.get("/app-users/{user_id}", response_model=AppUserOut)
+@requires_permission("read", "app-user")
 def read_app_user(
+    request: Request,
     user_id: int,
-    repo: AppUserRepo = Depends(AppUserRepo)
+    repo: AppUserRepo = Depends(AppUserRepo),
+    current_user: AppUserIn = Depends(get_current_user)
 ):
     result = repo.get_app_user(user_id)
     if "error" in result:
@@ -39,10 +45,13 @@ def read_app_user(
 
 # Endpoint to update an AppUser by its ID
 @router.put("/app-users/{user_id}", response_model=AppUserOut)
+@requires_permission("update", "app-user")
 def update_app_user(
+    request: Request,
     user_id: int,
     user: AppUserIn,
-    repo: AppUserRepo = Depends(AppUserRepo)
+    repo: AppUserRepo = Depends(AppUserRepo),
+    current_user: AppUserIn = Depends(get_current_user)
 ):
     user.password = hash_password(user.password)
     result = repo.update_app_user(user_id, user)
@@ -52,9 +61,13 @@ def update_app_user(
 
 # Endpoint to delete an AppUser by its ID
 @router.delete("/app-users/{user_id}", response_model=dict)
+@requires_permission("delete", "app-user")
 def delete_app_user(
+    request: Request,
     user_id: int,
-    repo: AppUserRepo = Depends(AppUserRepo)
+    repo: AppUserRepo = Depends(AppUserRepo),
+    current_user: AppUserIn = Depends(get_current_user)
+    
 ):
     result = repo.delete_app_user(user_id)
     if "error" in result:
@@ -63,11 +76,11 @@ def delete_app_user(
 
 # Endpoint to list all AppUsers
 @router.get("/app-users", response_model=List[AppUserOut])
-async def list_app_users(
+@requires_permission("list", "app-user")
+def list_app_users(
+    request: Request,
     repo: AppUserRepo = Depends(AppUserRepo),
     current_user: AppUserIn = Depends(get_current_user)
 ):
-    if current_user.type_id < 3: # need to implement a user file to help control the level of access to each user. 
-        raise HTTPException(status_code=401, detail="Invalid user type")
     return repo.list_app_users()
     

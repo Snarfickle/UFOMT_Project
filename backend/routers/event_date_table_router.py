@@ -1,15 +1,19 @@
-from fastapi import APIRouter, Depends, HTTPException
-from typing import Union, List, Dict
+from fastapi import APIRouter, Depends, HTTPException, Request
+from typing import List
 from queries.event_date_table_query import EventDateIn, EventDateOut, EventDateRepo
-# from authenticator import authenticator
+from auth_utils.auth_utils import requires_permission, get_current_user
+from queries.app_user_query import AppUserIn
 
 router = APIRouter()
 
 # Endpoint to create a new EventDate
 @router.post("/event-dates", response_model=EventDateOut)
+@requires_permission(action="create", resource="event-date")  
 def create_event_date(
+    request: Request,
     event_date: EventDateIn,
-    repo: EventDateRepo = Depends(EventDateRepo)
+    repo: EventDateRepo = Depends(EventDateRepo),
+    current_user: AppUserIn = Depends(get_current_user)
 ):
     result = repo.create_event_date(event_date)
     if "error" in result:
@@ -18,9 +22,12 @@ def create_event_date(
 
 # Endpoint to fetch a EventDate by its ID
 @router.get("/event-dates/{date_id}", response_model=EventDateOut)
+@requires_permission(action="read", resource="event-date")  
 def read_event_date(
+    request: Request,
     date_id: int,
-    repo: EventDateRepo = Depends(EventDateRepo)
+    repo: EventDateRepo = Depends(EventDateRepo),
+    current_user: AppUserIn = Depends(get_current_user)
 ):
     result = repo.get_event_date(date_id)
     if "error" in result:
@@ -29,10 +36,13 @@ def read_event_date(
 
 # Endpoint to update a EventDate by its ID
 @router.put("/event-dates/{date_id}", response_model=EventDateOut)
+@requires_permission(action="update", resource="event-date")  
 def update_event_date(
+    request: Request,
     date_id: int,
     event_date: EventDateIn,
-    repo: EventDateRepo = Depends(EventDateRepo)
+    repo: EventDateRepo = Depends(EventDateRepo),
+    current_user: AppUserIn = Depends(get_current_user)
 ):
     result = repo.update_event_date(date_id, event_date)
     if "error" in result:
@@ -41,9 +51,12 @@ def update_event_date(
 
 # Endpoint to delete a EventDate by its ID
 @router.delete("/event-dates/{date_id}", response_model=dict)
+@requires_permission(action="delete", resource="event-date")  
 def delete_event_date(
+    request: Request,
     date_id: int,
-    repo: EventDateRepo = Depends(EventDateRepo)
+    repo: EventDateRepo = Depends(EventDateRepo),
+    current_user: AppUserIn = Depends(get_current_user)
 ):
     result = repo.delete_event_date(date_id)
     if "error" in result:
@@ -52,7 +65,10 @@ def delete_event_date(
 
 # Endpoint to list all EventDates
 @router.get("/event-dates", response_model=List[EventDateOut])
+@requires_permission(action="list", resource="event-date")  
 def list_event_dates(
-    repo: EventDateRepo = Depends(EventDateRepo)
+    request: Request,
+    repo: EventDateRepo = Depends(EventDateRepo),
+    current_user: AppUserIn = Depends(get_current_user)
 ):
     return repo.list_event_dates()

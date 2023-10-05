@@ -1,15 +1,18 @@
-from fastapi import APIRouter, Depends, HTTPException
-from typing import Union, List, Dict
+from fastapi import APIRouter, Depends, HTTPException, Request
+from typing import List
 from queries.schools_query import Error, SchoolIn, SchoolOut, SchoolRepo
-# from authenticator import authenticator
+from auth_utils.auth_utils import requires_permission, get_current_user
+from queries.app_user_query import AppUserIn
 
 router = APIRouter()
 
 @router.post("/schools", response_model=SchoolOut)
+@requires_permission(action="create", resource="schools")
 def create_school(
+    request: Request,
     school: SchoolIn,
     repo: SchoolRepo = Depends(SchoolRepo),
-    # account_data: Dict =  Depends(authenticator.get_current_account_data),
+    current_user: AppUserIn = Depends(get_current_user)
 ):
     result = repo.create_school(school)
     print(school)
@@ -18,9 +21,12 @@ def create_school(
     return result
 
 @router.get("/schools/{school_id}", response_model=SchoolOut)
+@requires_permission(action="read", resource="schools")
 def read_school(
+    request: Request,
     school_id: int,
-    repo: SchoolRepo = Depends(SchoolRepo)  # Assuming SchoolRepo is imported from the appropriate module
+    repo: SchoolRepo = Depends(SchoolRepo),
+    current_user: AppUserIn = Depends(get_current_user)
 ):
     result = repo.get_school(school_id)
     if "error" in result:
@@ -29,10 +35,13 @@ def read_school(
 
 # Endpoint to update a school by its ID
 @router.put("/schools/{school_id}", response_model=SchoolOut)
+@requires_permission(action="update", resource="schools")
 def update_school(
+    request: Request,
     school_id: int,
     school: SchoolIn,
-    repo: SchoolRepo = Depends(SchoolRepo)
+    repo: SchoolRepo = Depends(SchoolRepo),
+    current_user: AppUserIn = Depends(get_current_user)
 ):
     result = repo.update_school(school_id, school)
     if "error" in result:
@@ -41,9 +50,12 @@ def update_school(
 
 # Endpoint to delete a school by its ID
 @router.delete("/schools/{school_id}", response_model=dict)
+@requires_permission(action="delete", resource="schools")
 def delete_school(
+    request: Request,
     school_id: int,
-    repo: SchoolRepo = Depends(SchoolRepo)
+    repo: SchoolRepo = Depends(SchoolRepo),
+    current_user: AppUserIn = Depends(get_current_user)
 ):
     result = repo.delete_school(school_id)
     if "error" in result:
@@ -52,8 +64,11 @@ def delete_school(
 
 # Endpoint to list all schools (optional)
 @router.get("/schools", response_model=List[SchoolOut])
+@requires_permission("list", "schools")
 def list_schools(
-    repo: SchoolRepo = Depends(SchoolRepo)
+    request: Request,
+    repo: SchoolRepo = Depends(SchoolRepo),
+    current_user: AppUserIn = Depends(get_current_user)
 ):
     result = repo.get_all_schools()
     return result

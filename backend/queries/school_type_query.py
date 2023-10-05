@@ -57,7 +57,6 @@ class SchoolTypeRepo:
                     """
                 )
                 records = db.fetchall()
-                print("Here are the records!@! ",records)
                 return [SchoolTypeOut(**record) for record in records]
 
     def update_school_type(self, type_id: int, school_type: SchoolTypeIn) -> Union[SchoolTypeOut, dict]:

@@ -2,17 +2,25 @@ from pydantic import BaseModel
 from typing import Optional, Union, List
 from psycopg.rows import dict_row
 from queries.pool import pool
-from datetime import datetime
+from datetime import time, date, timedelta, datetime
 
 # Input model for event_dates
 class EventDateIn(BaseModel):
     event_id: int
-    start_date: datetime
-    end_date: datetime
+    date: date
+    ticket_price: int
+    start_time: time
+    end_time: time
 
 # Output model for event_dates
 class EventDateOut(EventDateIn):
-    date_id: int
+    event_dates_id: int
+    duration: timedelta
+
+
+def timedelta_to_time(delta: timedelta) -> time:
+    return (datetime.min + delta).time()
+
 
 class EventDateRepo:
     def create_event_date(self, event_date: EventDateIn) -> Union[EventDateOut, dict]:
@@ -20,13 +28,19 @@ class EventDateRepo:
             with conn.cursor(row_factory=dict_row) as db:
                 db.execute(
                     """
-                    INSERT INTO event_dates (event_id, start_date, end_date)
-                    VALUES (%s, %s, %s)
+                    INSERT INTO event_dates (event_id, date, ticket_price, start_time, end_time)
+                    VALUES (%s, %s, %s, %s, %s)
                     RETURNING *;
                     """,
-                    [event_date.event_id, event_date.start_date, event_date.end_date]
+                    [event_date.event_id, event_date.date, event_date.ticket_price, event_date.start_time, event_date.end_time]
                 )
                 record = db.fetchone()
+                # Convert duration from timedelta to time
+                # record['duration'] = (datetime.min + record['duration']).time()
+                
+                # # Map 'event_dates_id' to 'date_id'
+                # record['date_id'] = record.pop('event_dates_id')
+                
                 return EventDateOut(**record)
     
     def get_event_date(self, date_id: int) -> Union[EventDateOut, dict]:
@@ -51,12 +65,14 @@ class EventDateRepo:
                     """
                     UPDATE event_dates
                     SET event_id = %s,
-                        start_date = %s,
-                        end_date = %s
+                        date = %s,
+                        ticket_price = %s,
+                        start_time = %s,
+                        end_time = %s
                     WHERE date_id = %s
                     RETURNING *;
                     """,
-                    [event_date.event_id, event_date.start_date, event_date.end_date, date_id]
+                    [event_date.event_id, event_date.date, event_date.ticket_price, event_date.start_time, event_date.end_time, date_id]
                 )
                 record = db.fetchone()
                 if record is None:
