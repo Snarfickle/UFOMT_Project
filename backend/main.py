@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Depends, HTTPException, Form
+from fastapi.middleware.cors import CORSMiddleware
 from routers import (
     schools_router,
     school_type_router,
@@ -26,6 +27,13 @@ from start_file import create_initial_user
 
 app = FastAPI()
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],  # Allows requests from React app
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all methods
+    allow_headers=["*"],  # Allows all headers
+)
 
 @app.on_event("startup")
 async def startup_event():
@@ -42,7 +50,7 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
     return bcrypt.checkpw(plain_password.encode('utf-8'), hashed_password.encode('utf-8'))
 
 # Endpoint to login and get a JWT token
-@app.post("/token/", response_model=Token)
+@app.post("/login/", response_model=Token)
 def login_for_access_token(username: str = Form(...), password: str = Form(...), repo: AppUserRepo = Depends(AppUserRepo)):
     user = repo.get_user_by_username(username.lower())
     if not user or not verify_password(password, user.password):
