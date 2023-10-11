@@ -8,6 +8,7 @@ steps = [[
     );
 
    INSERT INTO grades (grade, description) VALUES
+    ('Kindergarten', '  '),
     ('Grade 1', 'Elementary'),
     ('Grade 2', 'Elementary'),
     ('Grade 3', 'Elementary'),
@@ -20,6 +21,13 @@ steps = [[
     ('Grade 10', 'High School'),
     ('Grade 11', 'High School'),
     ('Grade 12', 'High School'),
+    ('Music', '  '),
+    ('Art', '  '),
+    ('Drama', '  '),
+    ('Home-School', '  '),
+    ('Preschool', '  '),
+
+
     ('College', 'Post-secondary education, often leading to a degree.'),
     ('Community', 'Enthusiasts and lifelong learners engaged in educational pursuits outside the traditional grade structure.');
 

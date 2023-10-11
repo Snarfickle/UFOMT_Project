@@ -43,7 +43,7 @@ yarn-error.log*
 # --- Docker ---
 # Docker env file (can contain secrets)
 .env
-
+backend/data.js
 # General
 *.log
 

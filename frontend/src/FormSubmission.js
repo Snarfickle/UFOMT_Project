@@ -251,7 +251,7 @@ const FormSubmission = () => {
         if (selectedGrade && ["College", "Community", "Preschool"].includes(selectedGrade.grade)) {
             setIneligibleGradeModal(true);
             setDisableSubmit(true);
-            console.log("Selected Grade: ",selectedGrade)
+            
             // Optionally, you may clear the form and selections here
             setFormData({
                 first_name: '',
@@ -268,7 +268,7 @@ const FormSubmission = () => {
             });
             setSelectedSchool(null);
             setSelectedEventProgram(null);
-            console.log(formData)
+            
         } else {
             setDisableSubmit(false);
             setFormData({
