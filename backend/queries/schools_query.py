@@ -10,16 +10,16 @@ class Error(BaseModel):
 
 class SchoolIn(BaseModel):
     name: str
-    phone: int
+    phone: str
     street: str
     city: str
-    state: str
+    state: Optional[str] = None
     zip: str
     student_body_count: Optional[int] = None
     title_one_status: Optional[bool] = None
     district_id: int
-    type_id: int
-    genre_id: int
+    type_id: Optional[int] = None
+    genre_id: Optional[int] = None
 
 
 class SchoolOut(SchoolIn):

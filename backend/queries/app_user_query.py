@@ -28,6 +28,9 @@ class AppUserIn(BaseModel):
     state: Optional[str] = None
     zip: Optional[int] = None
 
+
+
+
 # Output model for AppUser
 class AppUserOut(AppUserIn):
     user_id: int
@@ -200,7 +203,7 @@ class AppUserRepo:
                 )
                 records = db.fetchall()
                 return [AppUserOut(**record) for record in records]
-    def get_user_by_username(self, username: str) -> Optional[AppUserOut]:
+    def get_user_by_username(self, username: str) -> Union[AppUserOut, dict]:
         with pool.connection() as conn:
             with conn.cursor(row_factory=dict_row) as db:
                 db.execute(

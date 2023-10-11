@@ -23,7 +23,8 @@ steps = [[
     ('schools'),
     ('teacher-status'),
     ('tickets-status'),
-    ('tickets');
+    ('tickets'),
+    ('form-submission');
     
     COMMIT;
     """,

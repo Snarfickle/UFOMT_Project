@@ -18,6 +18,8 @@ from routers import (
     tickets_status_router,
     tickets_table_router,
     admin_user_router,
+    form_submission_router,
+    school_file_loader,
 )
 from auth_utils.auth_utils import token_encoder, Token
 from queries.app_user_query import AppUserRepo
@@ -27,9 +29,14 @@ from start_file import create_initial_user
 
 app = FastAPI()
 
+origins = [
+    "http://localhost:3000",  # React local dev server
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # Allows requests from React app
+    allow_origins=origins,
+    # allow_origins=["http://localhost:3000"],  # Allows requests from React app
     allow_credentials=True,
     allow_methods=["*"],  # Allows all methods
     allow_headers=["*"],  # Allows all headers
@@ -58,6 +65,16 @@ def login_for_access_token(username: str = Form(...), password: str = Form(...),
     access_token = token_encoder(user_id=user.user_id)
     return {"access_token":access_token, "token_type":"bearer"}
 
+@app.post("/token/", response_model=Token)
+def login_for_access_token(username: str = Form(...), password: str = Form(...), repo: AppUserRepo = Depends(AppUserRepo)):
+    user = repo.get_user_by_username(username.lower())
+    if not user or not verify_password(password, user.password):
+        raise HTTPException(status_code=400, detail="Incorrect username or password")
+    access_token = token_encoder(user_id=user.user_id)
+    return {"access_token":access_token, "token_type":"bearer"}
+
+app.include_router(school_file_loader.router)
+app.include_router(form_submission_router.router) #/form-submissions
 app.include_router(admin_user_router.router) #/admin-users, used to create admin, staff or OBC users. 
 app.include_router(schools_router.router) #/schools/{school_id}
 app.include_router(school_type_router.router) #/schooltypes/{type_id}

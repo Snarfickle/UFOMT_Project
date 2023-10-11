@@ -65,10 +65,10 @@ def delete_events_program(
 
 # Endpoint to list all EventsPrograms
 @router.get("/events-programs", response_model=List[EventsProgramOut])
-@requires_permission(action="list", resource="events-program") 
+# @requires_permission(action="list", resource="events-program") 
 def list_events_programs(
     request: Request,
-    repo: EventsProgramRepo = Depends(EventsProgramRepo),
-    current_user: AppUserIn = Depends(get_current_user)
+    repo: EventsProgramRepo = Depends(EventsProgramRepo)
+    # current_user: AppUserIn = Depends(get_current_user)
 ):
     return repo.list_events_programs()

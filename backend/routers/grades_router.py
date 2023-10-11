@@ -64,10 +64,10 @@ def delete_grade(
 
 # Endpoint to list all Grades
 @router.get("/grades", response_model=List[GradeOut])
-@requires_permission(action="list", resource="grades") 
+# @requires_permission(action="list", resource="grades") 
 def list_grades(
     request: Request,
-    repo: GradeRepo = Depends(GradeRepo),
-    current_user: AppUserIn = Depends(get_current_user)
+    repo: GradeRepo = Depends(GradeRepo)
+    # current_user: AppUserIn = Depends(get_current_user)
 ):
     return repo.list_grades()

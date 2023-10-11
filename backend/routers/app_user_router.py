@@ -1,7 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, Request
-from typing import List, Optional
+from typing import List
 from queries.app_user_query import AppUserIn, AppUserOut, AppUserRepo
-# from authenticator import authenticator
 import bcrypt
 from auth_utils.auth_utils import requires_permission, get_current_user, oauth2_scheme, decode_token
 
@@ -30,7 +29,7 @@ def create_app_user(
     return result
 
 # Endpoint to fetch an AppUser by its ID
-@router.get("/app-users/{user_id}", response_model=AppUserOut)
+@router.get("/app-users/id/{user_id}", response_model=AppUserOut)
 @requires_permission("read", "app-user")
 def read_app_user(
     request: Request,
@@ -83,4 +82,17 @@ def list_app_users(
     current_user: AppUserIn = Depends(get_current_user)
 ):
     return repo.list_app_users()
-    
+
+# Endpoint to fetch an AppUser by its ID
+@router.get("/app-users/username/{username}", response_model=AppUserOut)
+@requires_permission("read", "app-user")
+def read_app_user(
+    request: Request,
+    username: str,
+    repo: AppUserRepo = Depends(AppUserRepo),
+    current_user: AppUserIn = Depends(get_current_user)
+):
+    result = repo.get_user_by_username(username)
+    if "error" in result:
+        raise HTTPException(status_code=404, detail=result["error"])
+    return result

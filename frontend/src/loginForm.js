@@ -4,16 +4,16 @@ import { useAuth } from './AuthContext';
 import { useNavigate } from 'react-router-dom';
 
 function LoginPage() {
-    const [username, setUserName] = useState('');
+    const [username, setUserNameForm] = useState('');
     const [password, setPassword] = useState('');
     const [loginFailed, setLoginFailed] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    const { setToken } = useAuth();
+    const { setToken, setUserName } = useAuth();
     const navigate  = useNavigate();
 
     const handleUserNameChange = (e) => {
         const value = e.target.value;
-        setUserName(value);
+        setUserNameForm(value);
     };
 
     const handlePasswordChange = (e) => {
@@ -40,13 +40,28 @@ function LoginPage() {
             if (response.ok) {
                 console.log('Login successful:', data);
                 setToken(data.access_token);
-
-                setUserName('');
+                setUserName(username);
+                setUserNameForm('');
                 setPassword('');
                 setLoginFailed(false);
+                try{
+                    const userResponse = await fetch(`http://localhost:8000/app-users/username/${username}`,
+                    {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${data.access_token}`
+                        },
+                    });
+                    const userData = await userResponse.json();
+                    setUserName(userData.first_name);
+                } catch (error) {
+                    console.log('User data fetching failed:', error);
+                }
+
                 navigate('/main');  // Navigate to MainPage
             } else {
-                setUserName('');
+                setUserNameForm('');
                 setPassword('');
                 setLoginFailed(true);
                 console.log('Login failed:', data);

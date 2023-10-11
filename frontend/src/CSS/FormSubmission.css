@@ -1,0 +1,65 @@
+/* General Form Styles */
+form {
+    max-width: 600px;
+    margin: auto;
+    padding: 20px;
+    background-color: #f8f8f8;
+    border-radius: 8px;
+}
+
+/* Spacing between form groups and elements */
+form .form-group {
+    margin-bottom: 16px;
+}
+
+/* Style for input and select elements */
+form .form-control, 
+form .react-select__control {
+    padding: 10px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+form .bold-label {
+    font-weight: bold;
+}
+
+/* Style for labels */
+form .form-check-label {
+    margin-left: 8px; /* Spacing between checkbox and label */
+}
+
+/* Style for checkbox */
+form .form-check {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Alert styling */
+.alert {
+    margin-bottom: 20px;
+}
+
+/* Button Styling */
+button {
+    background-color: #4CAF50; /* Green */
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    transition-duration: 0.4s;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+button:hover {
+    background-color: white;
+    color: black;
+    border: 1px solid #4CAF50;
+}

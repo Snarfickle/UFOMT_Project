@@ -64,10 +64,10 @@ def delete_district(
 
 # Endpoint to list all Districts
 @router.get("/districts", response_model=List[DistrictOut])
-@requires_permission(action="list", resource="district")  
+# @requires_permission(action="list", resource="district")  
 def list_districts(
     request: Request,
     repo: DistrictRepo = Depends(DistrictRepo),
-    current_user: AppUserIn = Depends(get_current_user)
+    # current_user: AppUserIn = Depends(get_current_user)
 ):
     return repo.list_districts()

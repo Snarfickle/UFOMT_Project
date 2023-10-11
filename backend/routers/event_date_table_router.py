@@ -65,10 +65,10 @@ def delete_event_date(
 
 # Endpoint to list all EventDates
 @router.get("/event-dates", response_model=List[EventDateOut])
-@requires_permission(action="list", resource="event-date")  
+# @requires_permission(action="list", resource="event-date")  
 def list_event_dates(
     request: Request,
     repo: EventDateRepo = Depends(EventDateRepo),
-    current_user: AppUserIn = Depends(get_current_user)
+    # current_user: AppUserIn = Depends(get_current_user)
 ):
     return repo.list_event_dates()

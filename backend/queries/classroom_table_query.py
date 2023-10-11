@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Optional, Union, List
+from typing import Union, List
 from psycopg.rows import dict_row
 from queries.pool import pool
 

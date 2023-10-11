@@ -64,11 +64,11 @@ def delete_school(
 
 # Endpoint to list all schools (optional)
 @router.get("/schools", response_model=List[SchoolOut])
-@requires_permission("list", "schools")
+# @requires_permission("list", "schools")
 def list_schools(
-    request: Request,
+    # request: Request,
     repo: SchoolRepo = Depends(SchoolRepo),
-    current_user: AppUserIn = Depends(get_current_user)
+    # current_user: AppUserIn = Depends(get_current_user)
 ):
     result = repo.get_all_schools()
     return result
