@@ -3,30 +3,30 @@ volumes:
     external: true
 
 services:
-  db:
-    image: postgres:14.5-bullseye
-    environment:
-      POSTGRES_DB: backend
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
-    ports:
-      - "15432:5432"
-    volumes:
-      - ufomt_data:/var/lib/postgresql/data
+  # db:
+  #   image: postgres:14.5-bullseye
+  #   environment:
+  #     POSTGRES_DB: backend
+  #     POSTGRES_USER: user
+  #     POSTGRES_PASSWORD: password
+  #   ports:
+  #     - "15432:5432"
+  #   volumes:
+  #     - ufomt_data:/var/lib/postgresql/data
     
   backend:
     build:
       context: ./backend
       dockerfile: ./Dockerfile.dev
     environment:
-      DATABASE_URL: postgresql://user:password@db/backend
-      WAIT_HOSTS: db:5432
+      DATABASE_URL: postgresql://ufomt_admin:Settingupthemusictowin!$100@aws-db-1.cbtf0rusmev2.us-east-2.rds.amazonaws.com:5432/postgres
+      WAIT_HOSTS: aws-db-1.cbtf0rusmev2.us-east-2.rds.amazonaws.com:5432
       PORT: 8000
       SIGNING_KEY: mQd1bQ2jIBJv5eOXJOe48moBUxdEJMn30TcYaK5gqGY
-    ports:
-      - "8000:80"
-    volumes:
-      - ./backend:/app
+    # ports:
+    #   - "8000:80"
+    # volumes:
+    #   - ./backend:/app
 
   frontend:
     image: node:lts-bullseye

@@ -43,7 +43,7 @@ yarn-error.log*
 # --- Docker ---
 # Docker env file (can contain secrets)
 .env
-backend/data.js
+backend/.data
 # General
 *.log
 
@@ -52,3 +52,4 @@ backend/data.js
 
 #general files to be ignored for security reasons
 backend/start_file.py
+docker-compose.yml

@@ -13,6 +13,8 @@ COPY main.py main.py
 # Modify these instructions to do that
 COPY queries queries
 COPY routers routers
+COPY auth_utils auth_utils
+
 
 RUN python -m pip install -r requirements.txt
 
