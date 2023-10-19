@@ -44,6 +44,7 @@ app.add_middleware(
 
 # @app.on_event("startup")
 # async def startup_event():
+
 #     # Your script logic here
 #         create_initial_user()
 

@@ -42,4 +42,4 @@ services:
       NODE_ENV: development
       HOST: "0.0.0.0"
       PUBLIC_URL: http://localhost:3000
-      REACT_APP_HOST: http://localhost:8000
+      REACT_APP_HOST: http://18.223.44.105:8000
