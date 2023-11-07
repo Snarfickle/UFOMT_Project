@@ -2,6 +2,7 @@ import React, { useState, useSyncExternalStore } from 'react';
 import { Container, Form, Button, Row, Col, Alert, Spinner } from 'react-bootstrap';
 import { useAuth } from './AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { backendURL } from './IPaddress';
 
 function LoginPage() {
     const [username, setUserNameForm] = useState('');
@@ -26,26 +27,33 @@ function LoginPage() {
         setIsLoading(true);
         
         try {
-            const response = await fetch('http://localhost:8000/login/', {
+            const response = await fetch(`${backendURL}/login/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
                 },
                 body: `username=${username}&password=${encodeURIComponent(password)}`,
             });
+            // const text = await response.text();
+            // console.log("Fetching from:", `${backendURL}/login/`);
+            // console.log("REACT_APP_HOST:", process.env.REACT_APP_HOST);
+            // console.log("react environment:", process.env);
+
+
             
             const data = await response.json();
-            console.log("data: ", data);
+            // console.log("data: ", data);
             
             if (response.ok) {
-                console.log('Login successful:', data);
+                // console.log('Login successful:', data);
                 setToken(data.access_token);
                 setUserName(username);
                 setUserNameForm('');
                 setPassword('');
                 setLoginFailed(false);
                 try{
-                    const userResponse = await fetch(`http://localhost:8000/app-users/username/${username}`,
+                    
+                    const userResponse = await fetch(`${backendURL}/app-users/username/${username}`,
                     {
                         method: 'GET',
                         headers: {
@@ -68,6 +76,9 @@ function LoginPage() {
             }
         } catch (error) {
             console.log('Error:', error);
+            console.log("Fetching from:", `${backendURL}/login/`);
+            console.log("REACT_APP_HOST:", process.env.REACT_APP_HOST);
+            console.log("react environment:", process.env);
             // Handle error, e.g., show error message to user
         } finally {
             setIsLoading(false);

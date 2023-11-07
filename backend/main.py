@@ -24,29 +24,37 @@ from routers import (
 from auth_utils.auth_utils import token_encoder, Token
 from queries.app_user_query import AppUserRepo
 import bcrypt
-# from start_file import create_initial_user
+
+import os
 
 
 app = FastAPI()
 
 origins = [
-    "http://localhost:3000",  # React local dev server
+    # os.getenv("FRONTEND_URL", "default_value_if_not_set"),  # It's safer to have a default or check if it's None
+    "http://ufomt-load-1431517948.us-east-1.elb.amazonaws.com",
+    "http://3.236.70.210",
 ]
+
+print("Allowed origins for CORS:", origins)
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
-    # allow_origins=["http://localhost:3000"],  # Allows requests from React app
     allow_credentials=True,
     allow_methods=["*"],  # Allows all methods
     allow_headers=["*"],  # Allows all headers
 )
 
-# @app.on_event("startup")
-# async def startup_event():
+@app.on_event("startup")
+async def startup_event():
+    try:
+        from start_file import create_initial_user
 
-#     # Your script logic here
-#         create_initial_user()
+        # Your script logic here
+        create_initial_user()
+    except ImportError as e:
+        print(f"The start_file module could not be imported: {e}. Be sure to rebase or rebuild the database with a new startfile and user information.")
 
 def hash_password(plain_password: str) -> str:
     # '''Hash a password for storing.'''

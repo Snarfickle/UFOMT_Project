@@ -4,7 +4,7 @@ import { useAuth } from "./AuthContext";
 import { useNavigate } from "react-router-dom";
 import './CSS/MainPage.css';
 import NavbarComponent from './Nav';
-
+import { backendURL } from "./IPaddress";
 
 function MainPage() {
     const [show, setShow] = useState(true);
@@ -23,7 +23,7 @@ function MainPage() {
     // The first attempt does what it can, and then removing the catch error seems to allow the omitted schools
     // to be entered. 
         try { 
-            const response = await fetch('http://localhost:8000/uploadschools', {
+            const response = await fetch(`${backendURL}/uploadschools`, {
                 method: 'POST',
                 body: formData,
                 // headers: { 'Content-Type': 'multipart/form-data' } 
@@ -45,7 +45,7 @@ function MainPage() {
         formData.append('file', file);
     
         try {
-            const response = await fetch('http://localhost:8000/uploaddistricts', {
+            const response = await fetch(`${backendURL}/uploaddistricts`, {
                 method: 'POST',
                 body: formData,
                 // headers: { 'Content-Type': 'multipart/form-data' } 

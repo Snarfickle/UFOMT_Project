@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import Select from 'react-select';
 import { Form, Button, Alert, Modal } from 'react-bootstrap';
 import './CSS/FormSubmission.css';
-
+import { backendURL } from './IPaddress';
 // for Private we need the form to say "private school students do not qualify for the 
 // free POPS funding provided by this program. Please reach out to the UFOMT box office for a 50% off student discount"
 
@@ -54,7 +54,7 @@ const FormSubmission = () => {
     // Fetch data from APIs
     useEffect(() => {
       const fetchGrades = async () => {
-        const url = 'http://localhost:8000/grades'
+        const url = `${backendURL}/grades`
         const response = await fetch(url);
         if (response.ok) {
           const data = await response.json();
@@ -67,7 +67,7 @@ const FormSubmission = () => {
         }}
       };
       const fetchDistricts = async () => {
-        const url = 'http://localhost:8000/districts';
+        const url = `${backendURL}/districts`;
         const response = await fetch(url);
         if (response.ok) {
           const data = await response.json();
@@ -77,7 +77,7 @@ const FormSubmission = () => {
 
       const fetchSchools = async () => {
         setLoading(prev => ({ ...prev, schools: true }));
-        const response = await fetch('http://localhost:8000/schools');
+        const response = await fetch(`${backendURL}/schools`);
         
         if (!response.ok) throw new Error('Failed to fetch schools.');
         const data = await response.json();
@@ -92,7 +92,7 @@ const FormSubmission = () => {
       const fetchEventPrograms = async () => {
           try {
               setLoading(prev => ({ ...prev, eventPrograms: true }));
-              const response = await fetch('http://localhost:8000/events-programs');
+              const response = await fetch(`${backendURL}/events-programs`);
               if (!response.ok) throw new Error('Failed to fetch event programs.');
               const data = await response.json();
               setEventPrograms(data);
@@ -105,7 +105,7 @@ const FormSubmission = () => {
 
       const fetchEventDates = async () => {
         try {
-            const response = await fetch('http://localhost:8000/event-dates');
+            const response = await fetch(`${backendURL}/event-dates`);
             if (!response.ok) throw new Error('Failed to fetch event dates.');
             const data = await response.json();
             setEventDates(data);
@@ -290,7 +290,7 @@ const FormSubmission = () => {
       e.preventDefault();
       try {
           // Post formData to API
-          const response = await fetch('http://localhost:8000/form-submissions', {
+          const response = await fetch(`${backendURL}/form-submissions`, {
               method: 'POST',
               headers: {
                   'Content-Type': 'application/json'

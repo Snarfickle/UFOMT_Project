@@ -2,7 +2,7 @@ async def migrate():
     from . import down, up, LATEST, ZERO
     import os
     import sys
-
+    
     db_url = os.environ["DATABASE_URL"]
 
     if len(sys.argv) < 2:
@@ -34,7 +34,8 @@ async def migrate():
 
 if __name__ == "__main__":
     from asyncio import run
+    from main import origins
 
     run(migrate())
     print("Migrations have run.")
-    print("Updated something here!")
+    print("    Origins: ", origins)

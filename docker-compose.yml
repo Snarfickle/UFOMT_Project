@@ -3,35 +3,36 @@ volumes:
     external: true
 
 services:
-  # db:
-  #   image: postgres:14.5-bullseye
-  #   environment:
-  #     POSTGRES_DB: backend
-  #     POSTGRES_USER: user
-  #     POSTGRES_PASSWORD: password
-  #   ports:
-  #     - "15432:5432"
-  #   volumes:
-  #     - ufomt_data:/var/lib/postgresql/data
+  db:
+    image: postgres:14.5-bullseye
+    environment:
+      POSTGRES_DB: backend
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    ports:
+      - "15432:5432"
+    volumes:
+      - ufomt_data:/var/lib/postgresql/data
     
   backend:
     build:
       context: ./backend
       dockerfile: ./Dockerfile.dev
     environment:
-      DATABASE_URL: postgresql://ufomt_admin:Settingupthemusictowin!$100@aws-db-1.cbtf0rusmev2.us-east-2.rds.amazonaws.com:5432/postgres
-      WAIT_HOSTS: aws-db-1.cbtf0rusmev2.us-east-2.rds.amazonaws.com:5432
+      DATABASE_URL: postgresql://user:password@db/backend
+      WAIT_HOSTS: db:5432
       PORT: 8000
       SIGNING_KEY: mQd1bQ2jIBJv5eOXJOe48moBUxdEJMn30TcYaK5gqGY
-    # ports:
-    #   - "8000:80"
-    # volumes:
-    #   - ./backend:/app
+      FRONTEND_URL: http://localhost:3000
+    ports:
+      - "8000:80"
+    volumes:
+      - ./backend:/app
 
   frontend:
     image: node:lts-bullseye
     command: /bin/bash run.sh
-    build: ./frontend
+    # build: ./frontend
     working_dir: /app
     volumes:
       - ./frontend:/app
@@ -39,7 +40,7 @@ services:
       - "3000:3000"
     environment:
       HOST_OS: ${OS}
-      NODE_ENV: development
+      NODE_ENV: production
       HOST: "0.0.0.0"
       PUBLIC_URL: http://localhost:3000
-      REACT_APP_HOST: http://18.223.44.105:8000
+      REACT_APP_HOST: http://backend:8000

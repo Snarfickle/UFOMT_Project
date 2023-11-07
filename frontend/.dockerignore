@@ -1,0 +1,60 @@
+# # Ignore the Dockerfile itself
+# Dockerfile
+
+# # Ignore docker-compose files
+# docker-compose.yml
+# docker-compose.override.yml
+
+# # Ignore .git directory
+# .git/
+
+# # Ignore all markdown files
+# *.md
+
+# # Ignore all log files
+# *.log
+
+# # Ignore Python cache files and directories
+# __pycache__/
+# *.pyc
+# *.pyo
+# *.pyd
+# *.db
+
+# # Ignore test directory
+# tests/
+
+# # Ignore all .env files
+# *.env
+
+# # Ignore all compiled and build files
+# *.com
+# *.class
+# *.dll
+# *.exe
+# *.o
+# *.so
+
+# # Ignore all .gitignore and .dockerignore
+.gitignore
+.dockerignore
+
+# # Ignore configuration files
+# *.conf
+
+# # Ignore VS Code directory
+# .vscode/
+
+# # Ignore all .csv files (if not used in application)
+# *.csv
+
+# # Ignore all local databases
+# *.sqlite
+
+# # Exclude specific directories or files as per your requirement
+# # my_folder_to_exclude/
+# # my_file_to_exclude.py
+# start_file
+# .data
+node_modules
+.run.sh
