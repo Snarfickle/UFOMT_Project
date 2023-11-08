@@ -1,3 +1,3 @@
-Here is the initial wire frame for the project:
+Here is the wire frame for the project:
 
-![Initial wire frame](journaling/pictures/UFOMT%20initial%20mapping.png)
+![Wire frame](journaling\pictures\Wire%Frame-2023-11-07.png)
