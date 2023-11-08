@@ -11,7 +11,7 @@ def hash_password(plain_password: str) -> str:
 router = APIRouter()
 
 # Endpoint to create a new AppUser
-@router.post("/app-users", response_model=AppUserOut)
+@router.post("/api/app-users", response_model=AppUserOut)
 def create_app_user(
     user: AppUserIn,
     repo: AppUserRepo = Depends(AppUserRepo)
@@ -29,7 +29,7 @@ def create_app_user(
     return result
 
 # Endpoint to fetch an AppUser by its ID
-@router.get("/app-users/id/{user_id}", response_model=AppUserOut)
+@router.get("/api/app-users/id/{user_id}", response_model=AppUserOut)
 @requires_permission("read", "app-user")
 def read_app_user(
     request: Request,
@@ -43,7 +43,7 @@ def read_app_user(
     return result
 
 # Endpoint to update an AppUser by its ID
-@router.put("/app-users/{user_id}", response_model=AppUserOut)
+@router.put("/api/app-users/{user_id}", response_model=AppUserOut)
 @requires_permission("update", "app-user")
 def update_app_user(
     request: Request,
@@ -59,7 +59,7 @@ def update_app_user(
     return result
 
 # Endpoint to delete an AppUser by its ID
-@router.delete("/app-users/{user_id}", response_model=dict)
+@router.delete("/api/app-users/{user_id}", response_model=dict)
 @requires_permission("delete", "app-user")
 def delete_app_user(
     request: Request,
@@ -74,7 +74,7 @@ def delete_app_user(
     return result
 
 # Endpoint to list all AppUsers
-@router.get("/app-users", response_model=List[AppUserOut])
+@router.get("/api/app-users", response_model=List[AppUserOut])
 @requires_permission("list", "app-user")
 def list_app_users(
     request: Request,
@@ -84,7 +84,7 @@ def list_app_users(
     return repo.list_app_users()
 
 # Endpoint to fetch an AppUser by its ID
-@router.get("/app-users/username/{username}", response_model=AppUserOut)
+@router.get("/api/app-users/username/{username}", response_model=AppUserOut)
 @requires_permission("read", "app-user")
 def read_app_user(
     request: Request,

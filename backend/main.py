@@ -33,7 +33,7 @@ app = FastAPI()
 origins = [
     # os.getenv("FRONTEND_URL", "default_value_if_not_set"),  # It's safer to have a default or check if it's None
     "http://ufomt-load-1431517948.us-east-1.elb.amazonaws.com",
-    "http://3.236.70.210",
+    "http://localhost:3000",
 ]
 
 print("Allowed origins for CORS:", origins)

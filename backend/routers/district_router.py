@@ -6,7 +6,7 @@ from queries.app_user_query import AppUserIn
 
 router = APIRouter()
 
-@router.post("/districts", response_model=DistrictOut)
+@router.post("/api/districts", response_model=DistrictOut)
 @requires_permission(action="create", resource="district")  
 def create_district(
     request: Request,
@@ -20,7 +20,7 @@ def create_district(
     return result
 
 # Endpoint to fetch a District by its ID
-@router.get("/districts/{district_id}", response_model=DistrictOut)
+@router.get("/api/districts/{district_id}", response_model=DistrictOut)
 @requires_permission(action="read", resource="district")  
 def read_district(
     request: Request,
@@ -34,7 +34,7 @@ def read_district(
     return result
 
 # Endpoint to update a District by its ID
-@router.put("/districts/{district_id}", response_model=DistrictOut)
+@router.put("/api/districts/{district_id}", response_model=DistrictOut)
 @requires_permission(action="update", resource="district")  
 def update_district(
     request: Request,
@@ -49,7 +49,7 @@ def update_district(
     return result
 
 # Endpoint to delete a District by its ID
-@router.delete("/districts/{district_id}", response_model=dict)
+@router.delete("/api/districts/{district_id}", response_model=dict)
 @requires_permission(action="delete", resource="district")  
 def delete_district(
     request: Request,
@@ -63,7 +63,7 @@ def delete_district(
     return result
 
 # Endpoint to list all Districts
-@router.get("/districts", response_model=List[DistrictOut])
+@router.get("/api/districts", response_model=List[DistrictOut])
 # @requires_permission(action="list", resource="district")  
 def list_districts(
     request: Request,

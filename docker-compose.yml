@@ -31,7 +31,7 @@ services:
 
   frontend:
     image: node:lts-bullseye
-    command: /bin/bash run.sh
+    command: /bin/bash run1.sh
     # build: ./frontend
     working_dir: /app
     volumes:

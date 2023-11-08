@@ -38,4 +38,3 @@ if __name__ == "__main__":
 
     run(migrate())
     print("Migrations have run.")
-    print("    Origins: ", origins)

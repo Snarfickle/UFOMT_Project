@@ -7,7 +7,7 @@ from queries.pool import pool
 
 router = APIRouter()
 
-@router.post("/uploadschools")
+@router.post("/api/uploadschools")
 async def upload_schools_file(file: UploadFile = File(...)):
     if file.filename.endswith('.csv'):
         data = await file.read()
@@ -75,7 +75,7 @@ async def upload_schools_file(file: UploadFile = File(...)):
                         print(f"Warning: District {district_name} or Type {type_name} not found, skipping entry for {row['name']}.")
     return {"status": "ok"}
     
-@router.post("/uploaddistricts")
+@router.post("/api/uploaddistricts")
 async def upload_districts_file(file: UploadFile = File(...)):
     if file.filename.endswith('.csv'):
         data = await file.read()

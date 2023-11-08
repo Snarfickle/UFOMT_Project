@@ -7,7 +7,7 @@ from queries.app_user_query import AppUserIn
 router = APIRouter()
 
 # Endpoint to create a new Location
-@router.post("/locations", response_model=LocationOut)
+@router.post("/api/locations", response_model=LocationOut)
 @requires_permission(action="create", resource="location")  
 def create_location(
     request: Request,
@@ -21,7 +21,7 @@ def create_location(
     return result
 
 # Endpoint to fetch a Location by its ID
-@router.get("/locations/{location_id}", response_model=LocationOut)
+@router.get("/api/locations/{location_id}", response_model=LocationOut)
 @requires_permission(action="read", resource="location")  
 def read_location(
     request: Request,
@@ -35,7 +35,7 @@ def read_location(
     return result
 
 # Endpoint to update a Location by its ID
-@router.put("/locations/{location_id}", response_model=LocationOut)
+@router.put("/api/locations/{location_id}", response_model=LocationOut)
 @requires_permission(action="update", resource="location")  
 def update_location(
     request: Request,
@@ -50,7 +50,7 @@ def update_location(
     return result
 
 # Endpoint to delete a Location by its ID
-@router.delete("/locations/{location_id}", response_model=dict)
+@router.delete("/api/locations/{location_id}", response_model=dict)
 @requires_permission(action="delete", resource="location")  
 def delete_location(
     request: Request,
@@ -64,7 +64,7 @@ def delete_location(
     return result
 
 # Endpoint to list all Locations
-@router.get("/locations", response_model=List[LocationOut])
+@router.get("/api/locations", response_model=List[LocationOut])
 @requires_permission(action="list", resource="location")  
 def list_locations(
     request: Request,

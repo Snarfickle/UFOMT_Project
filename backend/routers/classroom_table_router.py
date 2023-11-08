@@ -6,7 +6,7 @@ from queries.app_user_query import AppUserIn
 
 router = APIRouter()
 
-@router.post("/classrooms", response_model=ClassroomOut)
+@router.post("/api/classrooms", response_model=ClassroomOut)
 @requires_permission(action="create", resource="classroom")  
 def create_classroom(
     request: Request,
@@ -20,7 +20,7 @@ def create_classroom(
     return result
 
 # Endpoint to fetch a Classroom by its ID
-@router.get("/classrooms/{classroom_id}", response_model=ClassroomOut)
+@router.get("/api/classrooms/{classroom_id}", response_model=ClassroomOut)
 @requires_permission(action="read", resource="classroom")  
 def read_classroom(
     request: Request,
@@ -34,7 +34,7 @@ def read_classroom(
     return result
 
 # Endpoint to update a Classroom by its ID
-@router.put("/classrooms/{classroom_id}", response_model=ClassroomOut)
+@router.put("/api/classrooms/{classroom_id}", response_model=ClassroomOut)
 @requires_permission(action="update", resource="classroom")  
 def update_classroom(
     request: Request,
@@ -49,7 +49,7 @@ def update_classroom(
     return result
 
 # Endpoint to delete a Classroom by its ID
-@router.delete("/classrooms/{classroom_id}", response_model=dict)
+@router.delete("/api/classrooms/{classroom_id}", response_model=dict)
 @requires_permission(action="delete", resource="classroom")  
 def delete_classroom(
     request: Request,
@@ -63,7 +63,7 @@ def delete_classroom(
     return result
 
 # Endpoint to list all Classrooms
-@router.get("/classrooms", response_model=List[ClassroomOut])
+@router.get("/api/classrooms", response_model=List[ClassroomOut])
 @requires_permission(action="list", resource="classroom")  
 def list_classrooms(
     request: Request,

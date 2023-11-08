@@ -7,7 +7,7 @@ from queries.app_user_query import AppUserIn
 router = APIRouter()
 
 # Endpoint to create a new EventDate
-@router.post("/event-dates", response_model=EventDateOut)
+@router.post("/api/event-dates", response_model=EventDateOut)
 @requires_permission(action="create", resource="event-date")  
 def create_event_date(
     request: Request,
@@ -21,7 +21,7 @@ def create_event_date(
     return result
 
 # Endpoint to fetch a EventDate by its ID
-@router.get("/event-dates/{date_id}", response_model=EventDateOut)
+@router.get("/api/event-dates/{date_id}", response_model=EventDateOut)
 @requires_permission(action="read", resource="event-date")  
 def read_event_date(
     request: Request,
@@ -35,7 +35,7 @@ def read_event_date(
     return result
 
 # Endpoint to update a EventDate by its ID
-@router.put("/event-dates/{date_id}", response_model=EventDateOut)
+@router.put("/api/event-dates/{date_id}", response_model=EventDateOut)
 @requires_permission(action="update", resource="event-date")  
 def update_event_date(
     request: Request,
@@ -50,7 +50,7 @@ def update_event_date(
     return result
 
 # Endpoint to delete a EventDate by its ID
-@router.delete("/event-dates/{date_id}", response_model=dict)
+@router.delete("/api/event-dates/{date_id}", response_model=dict)
 @requires_permission(action="delete", resource="event-date")  
 def delete_event_date(
     request: Request,
@@ -64,7 +64,7 @@ def delete_event_date(
     return result
 
 # Endpoint to list all EventDates
-@router.get("/event-dates", response_model=List[EventDateOut])
+@router.get("/api/event-dates", response_model=List[EventDateOut])
 # @requires_permission(action="list", resource="event-date")  
 def list_event_dates(
     request: Request,

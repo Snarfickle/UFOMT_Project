@@ -6,7 +6,7 @@ from queries.app_user_query import AppUserIn
 
 router = APIRouter()
 
-@router.post("/event-types", response_model=EventTypeOut)
+@router.post("/api/event-types", response_model=EventTypeOut)
 @requires_permission(action="create", resource="event-type") 
 def create_event_type(
     request: Request,
@@ -20,7 +20,7 @@ def create_event_type(
     return result
 
 # Endpoint to fetch a EventType by its ID
-@router.get("/event-types/{event_type_id}", response_model=EventTypeOut)
+@router.get("/api/event-types/{event_type_id}", response_model=EventTypeOut)
 @requires_permission(action="read", resource="event-type") 
 def read_event_type(
     request: Request,
@@ -34,7 +34,7 @@ def read_event_type(
     return result
 
 # Endpoint to update a EventType by its ID
-@router.put("/event-types/{event_type_id}", response_model=EventTypeOut)
+@router.put("/api/event-types/{event_type_id}", response_model=EventTypeOut)
 @requires_permission(action="update", resource="event-type") 
 def update_event_type(
     request: Request,
@@ -49,7 +49,7 @@ def update_event_type(
     return result
 
 # Endpoint to delete a EventType by its ID
-@router.delete("/event-types/{event_type_id}", response_model=dict)
+@router.delete("/api/event-types/{event_type_id}", response_model=dict)
 @requires_permission(action="delete", resource="event-type") 
 def delete_event_type(
     request: Request,
@@ -63,7 +63,7 @@ def delete_event_type(
     return result
 
 # Endpoint to list all EventTypes
-@router.get("/event-types", response_model=List[EventTypeOut])
+@router.get("/api/event-types", response_model=List[EventTypeOut])
 @requires_permission(action="list", resource="event-type") 
 def list_event_types(
     request: Request,

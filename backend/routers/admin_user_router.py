@@ -9,7 +9,7 @@ from .app_user_router import hash_password
 router = APIRouter()
 
 
-@router.post("/admin-users", response_model=AppUserOut)
+@router.post("/api/admin-users", response_model=AppUserOut)
 @requires_permission("create", "app-user")
 def create_admin_user (
         request: Request,

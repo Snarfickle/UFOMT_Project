@@ -7,7 +7,7 @@ from queries.app_user_query import AppUserIn
 router = APIRouter()
 
 # Endpoint to create a new SchoolType
-@router.post("/schooltypes", response_model=SchoolTypeOut)
+@router.post("/api/schooltypes", response_model=SchoolTypeOut)
 @requires_permission(action="create", resource="school-type") 
 def create_school_type(
     request: Request,
@@ -21,7 +21,7 @@ def create_school_type(
     return result
 
 # Endpoint to get a SchoolType by its ID
-@router.get("/schooltypes/{type_id}", response_model=SchoolTypeOut)
+@router.get("/api/schooltypes/{type_id}", response_model=SchoolTypeOut)
 @requires_permission(action="read", resource="school-type") 
 def read_school_type(
     request: Request,
@@ -35,7 +35,7 @@ def read_school_type(
     return result
 
 # Endpoint to get a list of SchoolTypes
-@router.get("/schooltypes", response_model=List[SchoolTypeOut])
+@router.get("/api/schooltypes", response_model=List[SchoolTypeOut])
 @requires_permission(action="list", resource="school-type") 
 def list_school_type(
     request: Request,
@@ -46,7 +46,7 @@ def list_school_type(
     return result
 
 # Endpoint to update a SchoolType by its ID
-@router.put("/schooltypes/{type_id}", response_model=SchoolTypeOut)
+@router.put("/api/schooltypes/{type_id}", response_model=SchoolTypeOut)
 @requires_permission(action="update", resource="school-type") 
 def update_school_type(
     request: Request,
@@ -61,7 +61,7 @@ def update_school_type(
     return result
 
 # Endpoint to delete a SchoolType by its ID
-@router.delete("/schooltypes/{type_id}", response_model=dict)
+@router.delete("/api/schooltypes/{type_id}", response_model=dict)
 @requires_permission(action="delete", resource="school-type") 
 def delete_school_type(
     request: Request,

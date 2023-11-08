@@ -6,7 +6,7 @@ from queries.app_user_query import AppUserIn
 
 router = APIRouter()
 
-@router.post("/schools", response_model=SchoolOut)
+@router.post("/api/schools", response_model=SchoolOut)
 @auth_utils.requires_permission(action="create", resource="schools")
 def create_school(
     request: Request,
@@ -20,7 +20,7 @@ def create_school(
         raise HTTPException(status_code=400, detail=result.dict())
     return result
 
-@router.get("/schools/{school_id}", response_model=SchoolOut)
+@router.get("/api/schools/{school_id}", response_model=SchoolOut)
 @auth_utils.requires_permission(action="read", resource="schools")
 def read_school(
     request: Request,
@@ -34,7 +34,7 @@ def read_school(
     return result
 
 # Endpoint to update a school by its ID
-@router.put("/schools/{school_id}", response_model=SchoolOut)
+@router.put("/api/schools/{school_id}", response_model=SchoolOut)
 @auth_utils.requires_permission(action="update", resource="schools")
 def update_school(
     request: Request,
@@ -49,7 +49,7 @@ def update_school(
     return result
 
 # Endpoint to delete a school by its ID
-@router.delete("/schools/{school_id}", response_model=dict)
+@router.delete("/api/schools/{school_id}", response_model=dict)
 @auth_utils.requires_permission(action="delete", resource="schools")
 def delete_school(
     request: Request,
@@ -63,7 +63,7 @@ def delete_school(
     return result
 
 # Endpoint to list all schools (optional)
-@router.get("/schools", response_model=List[SchoolOut])
+@router.get("/api/schools", response_model=List[SchoolOut])
 # @auth_utils.requires_permission("list", "schools")
 def list_schools(
     # request: Request,

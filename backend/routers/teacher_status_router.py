@@ -6,7 +6,7 @@ from queries.app_user_query import AppUserIn
 
 router = APIRouter()
 
-@router.post("/teacherstatuses", response_model=TeacherStatusOut)
+@router.post("/api/teacherstatuses", response_model=TeacherStatusOut)
 @requires_permission(action="create", resource="teacher-status") 
 def create_teacher_status(
     request: Request,
@@ -20,7 +20,7 @@ def create_teacher_status(
     return result
 
 # Endpoint to fetch a TeacherStatus by its ID
-@router.get("/teacherstatuses/{teacher_status_id}", response_model=TeacherStatusOut)
+@router.get("/api/teacherstatuses/{teacher_status_id}", response_model=TeacherStatusOut)
 @requires_permission(action="read", resource="teacher-status") 
 def read_teacher_status(
     request: Request,
@@ -34,7 +34,7 @@ def read_teacher_status(
     return result
 
 # Endpoint to update a TeacherStatus by its ID
-@router.put("/teacherstatuses/{teacher_status_id}", response_model=TeacherStatusOut)
+@router.put("/api/teacherstatuses/{teacher_status_id}", response_model=TeacherStatusOut)
 @requires_permission(action="update", resource="teacher-status") 
 def update_teacher_status(
     request: Request,
@@ -49,7 +49,7 @@ def update_teacher_status(
     return result
 
 # Endpoint to delete a TeacherStatus by its ID
-@router.delete("/teacherstatuses/{teacher_status_id}", response_model=dict)
+@router.delete("/api/teacherstatuses/{teacher_status_id}", response_model=dict)
 @requires_permission(action="delete", resource="teacher-status") 
 def delete_teacher_status(
     request: Request,
@@ -63,7 +63,7 @@ def delete_teacher_status(
     return result
 
 # Endpoint to list all TeacherStatuses
-@router.get("/teacherstatuses", response_model=List[TeacherStatusOut])
+@router.get("/api/teacherstatuses", response_model=List[TeacherStatusOut])
 @requires_permission(action="list", resource="teacher-status") 
 def list_teacher_statuses(
     request: Request,

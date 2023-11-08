@@ -7,7 +7,7 @@ from queries.app_user_query import AppUserIn
 
 router = APIRouter()
 
-@router.post("/schoolgenres", response_model=SchoolGenreOut)
+@router.post("/api/schoolgenres", response_model=SchoolGenreOut)
 @requires_permission(action="create", resource="school-genre")  
 def create_school_genre(
     request: Request,
@@ -21,7 +21,7 @@ def create_school_genre(
     return result
 
 # Endpoint to fetch a SchoolGenre by its ID
-@router.get("/schoolgenres/{genre_id}", response_model=SchoolGenreOut)
+@router.get("/api/schoolgenres/{genre_id}", response_model=SchoolGenreOut)
 @requires_permission(action="read", resource="school-genre")  
 def read_school_genre(
     request: Request,
@@ -35,7 +35,7 @@ def read_school_genre(
     return result
 
 # Endpoint to update a SchoolGenre by its ID
-@router.put("/schoolgenres/{genre_id}", response_model=SchoolGenreOut)
+@router.put("/api/schoolgenres/{genre_id}", response_model=SchoolGenreOut)
 @requires_permission(action="update", resource="school-genre")  
 def update_school_genre(
     request: Request,
@@ -50,7 +50,7 @@ def update_school_genre(
     return result
 
 # Endpoint to delete a SchoolGenre by its ID
-@router.delete("/schoolgenres/{genre_id}", response_model=dict)
+@router.delete("/api/schoolgenres/{genre_id}", response_model=dict)
 @requires_permission(action="delete", resource="school-genre")  
 def delete_school_genre(
     request: Request,
@@ -64,7 +64,7 @@ def delete_school_genre(
     return result
 
 # Endpoint to list all SchoolGenres
-@router.get("/schoolgenres", response_model=List[SchoolGenreOut])
+@router.get("/api/schoolgenres", response_model=List[SchoolGenreOut])
 @requires_permission(action="list", resource="school-genre")  
 def list_school_genres(
     request: Request,

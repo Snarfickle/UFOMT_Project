@@ -6,7 +6,7 @@ from auth_utils.auth_utils import requires_permission, get_current_user
 
 router = APIRouter()
 
-@router.post("/usertypes", response_model=UserTypeOut)
+@router.post("/api/usertypes", response_model=UserTypeOut)
 @requires_permission(action="create", resource="app-user-type")
 def create_user_type(
     request: Request,
@@ -20,7 +20,7 @@ def create_user_type(
     return result
 
 # Endpoint to fetch a UserType by its ID
-@router.get("/usertypes/{type_id}", response_model=UserTypeOut)
+@router.get("/api/usertypes/{type_id}", response_model=UserTypeOut)
 @requires_permission(action="read", resource="app-user-type")
 def read_user_type(
     request: Request,
@@ -34,7 +34,7 @@ def read_user_type(
     return result
 
 # Endpoint to update a UserType by its ID
-@router.put("/usertypes/{type_id}", response_model=UserTypeOut)
+@router.put("/api/usertypes/{type_id}", response_model=UserTypeOut)
 @requires_permission(action="update", resource="app-user-type")
 def update_user_type(
     request: Request,
@@ -49,7 +49,7 @@ def update_user_type(
     return result
 
 # Endpoint to delete a UserType by its ID
-@router.delete("/usertypes/{type_id}", response_model=dict)
+@router.delete("/api/usertypes/{type_id}", response_model=dict)
 @requires_permission(action="delete", resource="app-user-type")
 def delete_user_type(
     request: Request,
@@ -63,7 +63,7 @@ def delete_user_type(
     return result
 
 # Endpoint to list all UserTypes
-@router.get("/usertypes", response_model=List[UserTypeOut])
+@router.get("/api/usertypes", response_model=List[UserTypeOut])
 @requires_permission(action="list", resource="app-user-type")
 def list_user_types(
     request: Request,

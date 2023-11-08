@@ -7,7 +7,7 @@ from queries.app_user_query import AppUserIn
 router = APIRouter()
 
 # Endpoint to create a new FormSubmission
-@router.post("/form-submissions", response_model=FormSubmissionOut)
+@router.post("/api/form-submissions", response_model=FormSubmissionOut)
 def create_form_submission(
     submission: FormSubmissionIn,
     repo: FormSubmissionRepo = Depends(FormSubmissionRepo)
@@ -19,7 +19,7 @@ def create_form_submission(
     return result
 
 # Endpoint to fetch a FormSubmission by its ID
-@router.get("/form-submissions/{submission_id}", response_model=FormSubmissionOut)
+@router.get("/api/form-submissions/{submission_id}", response_model=FormSubmissionOut)
 @requires_permission(action="read", resource="form-submission")
 def read_form_submission(
     request: Request,
@@ -33,7 +33,7 @@ def read_form_submission(
     return result
 
 # Endpoint to update a FormSubmission by its ID
-@router.put("/form-submissions/{submission_id}", response_model=FormSubmissionOut)
+@router.put("/api/form-submissions/{submission_id}", response_model=FormSubmissionOut)
 @requires_permission(action="update", resource="form-submission")
 def update_form_submission(
     request: Request,
@@ -48,7 +48,7 @@ def update_form_submission(
     return result
 
 # Endpoint to delete a FormSubmission by its ID
-@router.delete("/form-submissions/{submission_id}", response_model=dict)
+@router.delete("/api/form-submissions/{submission_id}", response_model=dict)
 @requires_permission(action="delete", resource="form-submission")
 def delete_form_submission(
     request: Request,
@@ -62,7 +62,7 @@ def delete_form_submission(
     return result
 
 # Endpoint to list all FormSubmissions
-@router.get("/form-submissions", response_model=List[FormSubmissionOut])
+@router.get("/api/form-submissions", response_model=List[FormSubmissionOut])
 @requires_permission(action="list", resource="form-submission")
 def list_form_submissions(
     request: Request,

@@ -6,7 +6,7 @@ from queries.app_user_query import AppUserIn
 
 router = APIRouter()
 
-@router.post("/grades", response_model=GradeOut)
+@router.post("/api/grades", response_model=GradeOut)
 @requires_permission(action="create", resource="grades") 
 def create_grade(
     request: Request,
@@ -20,7 +20,7 @@ def create_grade(
     return result
 
 # Endpoint to fetch a Grade by its ID
-@router.get("/grades/{grade_id}", response_model=GradeOut)
+@router.get("/api/grades/{grade_id}", response_model=GradeOut)
 @requires_permission(action="read", resource="grades") 
 def read_grade(
     request: Request,
@@ -34,7 +34,7 @@ def read_grade(
     return result
 
 # Endpoint to update a Grade by its ID
-@router.put("/grades/{grade_id}", response_model=GradeOut)
+@router.put("/api/grades/{grade_id}", response_model=GradeOut)
 @requires_permission(action="update", resource="grades") 
 def update_grade(
     request: Request,
@@ -49,7 +49,7 @@ def update_grade(
     return result
 
 # Endpoint to delete a Grade by its ID
-@router.delete("/grades/{grade_id}", response_model=dict)
+@router.delete("/api/grades/{grade_id}", response_model=dict)
 @requires_permission(action="delete", resource="grades") 
 def delete_grade(
     request: Request,
@@ -63,7 +63,7 @@ def delete_grade(
     return result
 
 # Endpoint to list all Grades
-@router.get("/grades", response_model=List[GradeOut])
+@router.get("/api/grades", response_model=List[GradeOut])
 # @requires_permission(action="list", resource="grades") 
 def list_grades(
     request: Request,

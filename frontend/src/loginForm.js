@@ -27,7 +27,7 @@ function LoginPage() {
         setIsLoading(true);
         
         try {
-            const response = await fetch(`${backendURL}/login/`, {
+            const response = await fetch(`${backendURL}/api/login/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
@@ -35,7 +35,7 @@ function LoginPage() {
                 body: `username=${username}&password=${encodeURIComponent(password)}`,
             });
             // const text = await response.text();
-            // console.log("Fetching from:", `${backendURL}/login/`);
+            // console.log("Fetching from:", `${backendURL}/api/login/`);
             // console.log("REACT_APP_HOST:", process.env.REACT_APP_HOST);
             // console.log("react environment:", process.env);
 
@@ -53,7 +53,7 @@ function LoginPage() {
                 setLoginFailed(false);
                 try{
                     
-                    const userResponse = await fetch(`${backendURL}/app-users/username/${username}`,
+                    const userResponse = await fetch(`${backendURL}/api/app-users/username/${username}`,
                     {
                         method: 'GET',
                         headers: {
@@ -76,7 +76,7 @@ function LoginPage() {
             }
         } catch (error) {
             console.log('Error:', error);
-            console.log("Fetching from:", `${backendURL}/login/`);
+            console.log("Fetching from:", `${backendURL}/api/login/`);
             console.log("REACT_APP_HOST:", process.env.REACT_APP_HOST);
             console.log("react environment:", process.env);
             // Handle error, e.g., show error message to user

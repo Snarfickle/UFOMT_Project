@@ -54,7 +54,7 @@ const FormSubmission = () => {
     // Fetch data from APIs
     useEffect(() => {
       const fetchGrades = async () => {
-        const url = `${backendURL}/grades`
+        const url = `${backendURL}/api/grades`
         const response = await fetch(url);
         if (response.ok) {
           const data = await response.json();
@@ -67,7 +67,7 @@ const FormSubmission = () => {
         }}
       };
       const fetchDistricts = async () => {
-        const url = `${backendURL}/districts`;
+        const url = `${backendURL}/api/districts`;
         const response = await fetch(url);
         if (response.ok) {
           const data = await response.json();
@@ -77,7 +77,7 @@ const FormSubmission = () => {
 
       const fetchSchools = async () => {
         setLoading(prev => ({ ...prev, schools: true }));
-        const response = await fetch(`${backendURL}/schools`);
+        const response = await fetch(`${backendURL}/api/schools`);
         
         if (!response.ok) throw new Error('Failed to fetch schools.');
         const data = await response.json();
@@ -92,7 +92,7 @@ const FormSubmission = () => {
       const fetchEventPrograms = async () => {
           try {
               setLoading(prev => ({ ...prev, eventPrograms: true }));
-              const response = await fetch(`${backendURL}/events-programs`);
+              const response = await fetch(`${backendURL}/api/events-programs`);
               if (!response.ok) throw new Error('Failed to fetch event programs.');
               const data = await response.json();
               setEventPrograms(data);
@@ -105,7 +105,7 @@ const FormSubmission = () => {
 
       const fetchEventDates = async () => {
         try {
-            const response = await fetch(`${backendURL}/event-dates`);
+            const response = await fetch(`${backendURL}/api/event-dates`);
             if (!response.ok) throw new Error('Failed to fetch event dates.');
             const data = await response.json();
             setEventDates(data);
@@ -290,7 +290,7 @@ const FormSubmission = () => {
       e.preventDefault();
       try {
           // Post formData to API
-          const response = await fetch(`${backendURL}/form-submissions`, {
+          const response = await fetch(`${backendURL}/api/form-submissions`, {
               method: 'POST',
               headers: {
                   'Content-Type': 'application/json'

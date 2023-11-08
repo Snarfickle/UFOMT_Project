@@ -7,7 +7,7 @@ from queries.app_user_query import AppUserIn
 router = APIRouter()
 
 # Endpoint to create a new EventsProgram
-@router.post("/events-programs", response_model=EventsProgramOut)
+@router.post("/api/events-programs", response_model=EventsProgramOut)
 @requires_permission(action="create", resource="events-program") 
 def create_events_program(
     request: Request,
@@ -21,7 +21,7 @@ def create_events_program(
     return result
 
 # Endpoint to fetch a EventsProgram by its ID
-@router.get("/events-programs/{event_id}", response_model=EventsProgramOut)
+@router.get("/api/events-programs/{event_id}", response_model=EventsProgramOut)
 @requires_permission(action="read", resource="events-program") 
 def read_events_program(
     request: Request,
@@ -35,7 +35,7 @@ def read_events_program(
     return result
 
 # Endpoint to update a EventsProgram by its ID
-@router.put("/events-programs/{event_id}", response_model=EventsProgramOut)
+@router.put("/api/events-programs/{event_id}", response_model=EventsProgramOut)
 @requires_permission(action="update", resource="events-program") 
 def update_events_program(
     request: Request,
@@ -50,7 +50,7 @@ def update_events_program(
     return result
 
 # Endpoint to delete a EventsProgram by its ID
-@router.delete("/events-programs/{event_id}", response_model=dict)
+@router.delete("/api/events-programs/{event_id}", response_model=dict)
 @requires_permission(action="delete", resource="events-program") 
 def delete_events_program(
     request: Request,
@@ -64,7 +64,7 @@ def delete_events_program(
     return result
 
 # Endpoint to list all EventsPrograms
-@router.get("/events-programs", response_model=List[EventsProgramOut])
+@router.get("/api/events-programs", response_model=List[EventsProgramOut])
 # @requires_permission(action="list", resource="events-program") 
 def list_events_programs(
     request: Request,

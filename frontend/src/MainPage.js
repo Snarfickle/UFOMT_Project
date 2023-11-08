@@ -23,7 +23,7 @@ function MainPage() {
     // The first attempt does what it can, and then removing the catch error seems to allow the omitted schools
     // to be entered. 
         try { 
-            const response = await fetch(`${backendURL}/uploadschools`, {
+            const response = await fetch(`${backendURL}/api/uploadschools`, {
                 method: 'POST',
                 body: formData,
                 // headers: { 'Content-Type': 'multipart/form-data' } 
@@ -45,7 +45,7 @@ function MainPage() {
         formData.append('file', file);
     
         try {
-            const response = await fetch(`${backendURL}/uploaddistricts`, {
+            const response = await fetch(`${backendURL}/api/uploaddistricts`, {
                 method: 'POST',
                 body: formData,
                 // headers: { 'Content-Type': 'multipart/form-data' } 

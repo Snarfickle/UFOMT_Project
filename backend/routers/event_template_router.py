@@ -7,7 +7,7 @@ from queries.app_user_query import AppUserIn
 router = APIRouter()
 
 # Endpoint to create a new EventTemplate
-@router.post("/event-templates", response_model=EventTemplateOut)
+@router.post("/api/event-templates", response_model=EventTemplateOut)
 @requires_permission(action="create", resource="event-template")  
 def create_event_template(
     request: Request,
@@ -21,7 +21,7 @@ def create_event_template(
     return result
 
 # Endpoint to fetch a EventTemplate by its ID
-@router.get("/event-templates/{template_id}", response_model=EventTemplateOut)
+@router.get("/api/event-templates/{template_id}", response_model=EventTemplateOut)
 @requires_permission(action="read", resource="event-template")  
 def read_event_template(
     request: Request,
@@ -35,7 +35,7 @@ def read_event_template(
     return result
 
 # Endpoint to update a EventTemplate by its ID
-@router.put("/event-templates/{template_id}", response_model=EventTemplateOut)
+@router.put("/api/event-templates/{template_id}", response_model=EventTemplateOut)
 @requires_permission(action="update", resource="event-template")  
 def update_event_template(
     request: Request,
@@ -50,7 +50,7 @@ def update_event_template(
     return result
 
 # Endpoint to delete a EventTemplate by its ID
-@router.delete("/event-templates/{template_id}", response_model=dict)
+@router.delete("/api/event-templates/{template_id}", response_model=dict)
 @requires_permission(action="delete", resource="event-template")  
 def delete_event_template(
     request: Request,
@@ -64,7 +64,7 @@ def delete_event_template(
     return result
 
 # Endpoint to list all EventTemplates
-@router.get("/event-templates", response_model=List[EventTemplateOut])
+@router.get("/api/event-templates", response_model=List[EventTemplateOut])
 @requires_permission(action="list", resource="event-template")  
 def list_event_templates(
     request: Request,
