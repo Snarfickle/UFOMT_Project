@@ -63,7 +63,6 @@ const FormSubmission = () => {
             setGrades(data);
         } else {
             console.error('Fetched grades data is not an array:', data);
-
         }}
       };
       const fetchDistricts = async () => {

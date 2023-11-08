@@ -10,7 +10,7 @@ function LoginPage() {
     const [loginFailed, setLoginFailed] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const { setToken, setUserName } = useAuth();
-    const navigate  = useNavigate();
+    const navigate = useNavigate();
 
     const handleUserNameChange = (e) => {
         const value = e.target.value;
@@ -72,13 +72,13 @@ function LoginPage() {
                 setUserNameForm('');
                 setPassword('');
                 setLoginFailed(true);
-                console.log('Login failed:', data);
+                // console.log('Login failed:', data);
             }
         } catch (error) {
             console.log('Error:', error);
-            console.log("Fetching from:", `${backendURL}/api/login/`);
-            console.log("REACT_APP_HOST:", process.env.REACT_APP_HOST);
-            console.log("react environment:", process.env);
+            // console.log("Fetching from:", `${backendURL}/api/login/`);
+            // console.log("REACT_APP_HOST:", process.env.REACT_APP_HOST);
+            // console.log("react environment:", process.env);
             // Handle error, e.g., show error message to user
         } finally {
             setIsLoading(false);

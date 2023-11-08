@@ -8,12 +8,12 @@ import { backendURL } from "./IPaddress";
 
 function MainPage() {
     const [show, setShow] = useState(true);
-    const {username, setToken, setUserName} = useAuth();
+    const {username, token, setToken, setUserName} = useAuth();
     const navigate = useNavigate();
     const [file, setFile] = useState(null);
     const [upSchoolLoadStatus, setSchoolUploadStatus] = useState(null);
     const [upDistrictLoadStatus, setDistrictUploadStatus] = useState(null);
-
+    const [formSubCount, setFormSubCount] = useState();
 
     const onSchoolUpload = async () => {
         const formData = new FormData();
@@ -68,6 +68,28 @@ function MainPage() {
             setShow(false);
         }, 3000);
     },[]);
+    useEffect(() => {
+        const fetchFormSubCount = async () => {
+            console.log("setToken: ", token);
+            const url = `${backendURL}/api/form-submissions`;
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Authorization':`Bearer ${token}`
+                }
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+
+                console.log("Form submissions data: ", data);
+            } else {
+                console.error("The fetch at form-submissions failed.")
+            };
+        };
+
+        fetchFormSubCount();
+    }, []);
 
     const handleLogout = () => {
         setToken(null);
