@@ -36,7 +36,7 @@ origins = [
     "http://localhost:3000",
 ]
 
-print("Allowed origins for CORS:", origins)
+# print("Allowed origins for CORS:", origins)
 
 app.add_middleware(
     CORSMiddleware,
