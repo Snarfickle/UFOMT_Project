@@ -6,8 +6,10 @@ from fastapi.security import OAuth2PasswordBearer
 from queries.app_user_query import AppUserRepo, AppUserIn
 from functools import wraps
 from typing import Optional
+import os
 # JWT Configurations
-SECRET_KEY = "your_super_secret_key"  # TODO: Use a secure random key
+
+SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
 

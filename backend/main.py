@@ -66,7 +66,7 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
     return bcrypt.checkpw(plain_password.encode('utf-8'), hashed_password.encode('utf-8'))
 
 # Endpoint to login and get a JWT token
-@app.post("/login/", response_model=Token)
+@app.post("/api/login/", response_model=Token)
 def login_for_access_token(username: str = Form(...), password: str = Form(...), repo: AppUserRepo = Depends(AppUserRepo)):
     user = repo.get_user_by_username(username.lower())
     if not user or not verify_password(password, user.password):
@@ -74,7 +74,7 @@ def login_for_access_token(username: str = Form(...), password: str = Form(...),
     access_token = token_encoder(user_id=user.user_id)
     return {"access_token":access_token, "token_type":"bearer"}
 
-@app.post("/token/", response_model=Token)
+@app.post("/api/token/", response_model=Token)
 def login_for_access_token(username: str = Form(...), password: str = Form(...), repo: AppUserRepo = Depends(AppUserRepo)):
     user = repo.get_user_by_username(username.lower())
     if not user or not verify_password(password, user.password):
