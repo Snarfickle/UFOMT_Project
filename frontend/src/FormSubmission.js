@@ -49,6 +49,7 @@ const FormSubmission = () => {
     const [privateSchoolModal, setPrivateSchoolModal] = useState(false);
     const [disableSubmit, setDisableSubmit] = useState(false);
     const [ineligibleGradeModal, setIneligibleGradeModal] = useState(false);
+    const [submitSuccess, setSubmitSuccess ] = useState(false);
 
 
     // Fetch data from APIs
@@ -313,7 +314,7 @@ const FormSubmission = () => {
           if (!response.ok) {
               throw new Error('Network response was not ok:', Error);
           }
-  
+          setSubmitSuccess(true);
           // Log success and clear form
           setFormData({
               first_name: '',
@@ -519,6 +520,19 @@ const FormSubmission = () => {
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={() => setIneligibleGradeModal(false)}>
+                        Close
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+            <Modal show={submitSuccess} onHide={() => setSubmitSuccess(false)}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Submission Success!</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    Thank you for your participation.
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => setSubmitSuccess(false)}>
                         Close
                     </Button>
                 </Modal.Footer>

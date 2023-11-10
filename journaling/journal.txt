@@ -13,3 +13,8 @@ application by using ECS Fargate and made it available using a load balancer. To
 wire frame image. I also was able to finish the set up for the load balancer and I will be looking
 into getting a top level domain name (TLDN) for an SSL certification and then update the HTTP to 
 HTTPS.
+
+11.10.2023
+I was able to fully deploy the FormSubmission table on AWS and will be working on the rest of the 
+pages. I will start to work on wire framing what I think the pages should look like and then run 
+them by Pam. 

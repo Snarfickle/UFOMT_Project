@@ -34,18 +34,10 @@ function LoginPage() {
                 },
                 body: `username=${username}&password=${encodeURIComponent(password)}`,
             });
-            // const text = await response.text();
-            // console.log("Fetching from:", `${backendURL}/api/login/`);
-            // console.log("REACT_APP_HOST:", process.env.REACT_APP_HOST);
-            // console.log("react environment:", process.env);
-
-
             
             const data = await response.json();
-            // console.log("data: ", data);
             
             if (response.ok) {
-                // console.log('Login successful:', data);
                 setToken(data.access_token);
                 setUserName(username);
                 setUserNameForm('');
@@ -72,14 +64,10 @@ function LoginPage() {
                 setUserNameForm('');
                 setPassword('');
                 setLoginFailed(true);
-                // console.log('Login failed:', data);
             }
         } catch (error) {
             console.log('Error:', error);
-            // console.log("Fetching from:", `${backendURL}/api/login/`);
-            // console.log("REACT_APP_HOST:", process.env.REACT_APP_HOST);
-            // console.log("react environment:", process.env);
-            // Handle error, e.g., show error message to user
+            
         } finally {
             setIsLoading(false);
         }}
