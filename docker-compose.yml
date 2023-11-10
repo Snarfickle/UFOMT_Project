@@ -19,7 +19,7 @@ services:
       context: ./backend
       dockerfile: ./Dockerfile.dev
     environment:
-      DATABASE_URL: postgresql://user:password@db/backend
+      DATABASE_URL: postgresql://ufomt:password@db/backend
       WAIT_HOSTS: db:5432
       PORT: 8000
       SIGNING_KEY: mQd1bQ2jIBJv5eOXJOe48moBUxdEJMn30TcYaK5gqGY
@@ -43,4 +43,4 @@ services:
       NODE_ENV: production
       HOST: "0.0.0.0"
       PUBLIC_URL: http://localhost:3000
-      REACT_APP_HOST: http://backend:8000
+      REACT_APP_HOST: http://localhost:8000

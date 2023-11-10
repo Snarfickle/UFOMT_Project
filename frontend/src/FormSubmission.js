@@ -137,11 +137,24 @@ const FormSubmission = () => {
       return eventDates
         .filter(event_date_id => event_date_id.event_id === Number(selectedEventProgram.value))
         .map(event_date_id => {
-          return {
-            label: `${event_date_id.date} ${event_date_id.start_time}`,
-            value: event_date_id.event_dates_id
-          };
-        });
+            // Parse the start_time and create a Date object. Assuming start_time is in 'HH:mm:ss' format
+            const timeParts = event_date_id.start_time.split(':');
+            const date = new Date();
+            date.setHours(parseInt(timeParts[0], 10), parseInt(timeParts[1], 10), parseInt(timeParts[2], 10));
+          
+            // Format the date object to a 12-hour time with AM/PM
+            const formattedTime = date.toLocaleTimeString('en-US', {
+              hour: 'numeric',
+              minute: 'numeric',
+              hour12: true
+            });
+                    
+            return {
+              label: `${event_date_id.date} ${formattedTime}`,
+              value: event_date_id.event_dates_id
+            };
+          });
+          
     }, [eventDates, selectedEventProgram]);
     
 

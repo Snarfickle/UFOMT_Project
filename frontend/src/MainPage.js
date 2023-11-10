@@ -70,7 +70,6 @@ function MainPage() {
     },[]);
     useEffect(() => {
         const fetchFormSubCount = async () => {
-            console.log("setToken: ", token);
             const url = `${backendURL}/api/form-submissions`;
             const response = await fetch(url, {
                 method: 'GET',
