@@ -53,3 +53,4 @@ backend/.data
 #general files to be ignored for security reasons
 backend/start_file.py
 docker-compose.yml
+docker-compose.yml
