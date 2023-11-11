@@ -80,8 +80,6 @@ function MainPage() {
 
             if (response.ok) {
                 const data = await response.json();
-
-                console.log("Form submissions data: ", data);
             } else {
                 console.error("The fetch at form-submissions failed.")
             };

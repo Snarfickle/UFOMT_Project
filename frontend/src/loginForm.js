@@ -67,7 +67,6 @@ function LoginPage() {
             }
         } catch (error) {
             console.log('Error:', error);
-            
         } finally {
             setIsLoading(false);
         }}

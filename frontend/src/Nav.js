@@ -23,12 +23,27 @@ function NavbarComponent() {
             <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
                 <Nav>
                     <NavLink 
+                        to="/main" 
+                        className="nav-link" 
+                        activeclassname="active"
+                    >
+                        Main
+                    </NavLink>
+                    <NavLink 
                         to="/formsubmission" 
                         className="nav-link" 
                         activeclassname="active"
                     >
                         Form Submission
+                    </NavLink>                    
+                    <NavLink 
+                        to="/new-account" 
+                        className="nav-link" 
+                        activeclassname="active"
+                    >
+                        Create Staff Account
                     </NavLink>
+
                 </Nav>
                 <Button variant="outline-dark" onClick={handleLogout}>Logout</Button>
             </Navbar.Collapse>

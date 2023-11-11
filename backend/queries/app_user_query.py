@@ -3,6 +3,7 @@ from typing import Optional, Union, List
 from datetime import date, datetime
 from queries.pool import pool
 from psycopg.rows import dict_row
+from psycopg2.errors import UniqueViolation
 
 # Input model for AppUser
 class AppUserIn(BaseModel):
@@ -41,63 +42,72 @@ class AppUserOut(AppUserIn):
 class AppUserRepo:
 
     def create_app_user(self, user: AppUserIn) -> Union[AppUserOut, dict]:
-        with pool.connection() as conn:
-            with conn.cursor(row_factory=dict_row) as db:
-                # SQL query for inserting an app user
-                db.execute(
-                    """
-                    INSERT INTO app_user (
-                        username, 
-                        password,
-                        type_id,
-                        first_name,
-                        last_name,
-                        email,
-                        phone_number,
-                        created_date,
-                        terminated_date,
-                        grade_id,
-                        school_id,
-                        cactus_id,
-                        active,
-                        notes,
-                        teacher_status_id,
-                        parent_guardian,
-                        employee_id,
-                        street,
-                        city,
-                        state,
-                        zip
+        try:
+            with pool.connection() as conn:
+                with conn.cursor(row_factory=dict_row) as db:
+                    # SQL query for inserting an app user
+                    db.execute("SELECT 1 FROM app_user WHERE username = %s OR email = %s", (user.username, user.email))
+                    if db.fetchone():
+                        return {"error": "Username or email already exists"}
+                    db.execute(
+                        """
+                        INSERT INTO app_user (
+                            username, 
+                            password,
+                            type_id,
+                            first_name,
+                            last_name,
+                            email,
+                            phone_number,
+                            created_date,
+                            terminated_date,
+                            grade_id,
+                            school_id,
+                            cactus_id,
+                            active,
+                            notes,
+                            teacher_status_id,
+                            parent_guardian,
+                            employee_id,
+                            street,
+                            city,
+                            state,
+                            zip
+                        )
+                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                        RETURNING *;
+                        """,
+                        [
+                            user.username,
+                            user.password,
+                            user.type_id,
+                            user.first_name,
+                            user.last_name,
+                            user.email,
+                            user.phone_number,
+                            user.created_date,
+                            user.terminated_date,
+                            user.grade_id,
+                            user.school_id,
+                            user.cactus_id,
+                            user.active,
+                            user.notes,
+                            user.teacher_status_id,
+                            user.parent_guardian,
+                            user.employee_id,
+                            user.street,
+                            user.city,
+                            user.state,
+                            user.zip
+                        ]
                     )
-                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-                    RETURNING *;
-                    """,
-                    [
-                        user.username,
-                        user.password,
-                        user.type_id,
-                        user.first_name,
-                        user.last_name,
-                        user.email,
-                        user.phone_number,
-                        user.created_date,
-                        user.terminated_date,
-                        user.grade_id,
-                        user.school_id,
-                        user.cactus_id,
-                        user.active,
-                        user.notes,
-                        user.teacher_status_id,
-                        user.parent_guardian,
-                        user.employee_id,
-                        user.street,
-                        user.city,
-                        user.state,
-                        user.zip
-                    ]
-                )
-                record = db.fetchone()
-                return AppUserOut(**record)
+                    record = db.fetchone()
+                    return AppUserOut(**record)
+        except UniqueViolation as e:
+            return {"error1": "Username or email already exists"}
+        except Exception as e:
+            return {"error2": str(e)}
+
 
     def get_app_user(self, user_id: int) -> Union[AppUserOut, dict]:
         with pool.connection() as conn:

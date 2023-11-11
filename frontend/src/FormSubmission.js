@@ -94,7 +94,10 @@ const FormSubmission = () => {
               setLoading(prev => ({ ...prev, eventPrograms: true }));
               const response = await fetch(`${backendURL}/api/events-programs`);
               if (!response.ok) throw new Error('Failed to fetch event programs.');
-              const data = await response.json();
+              let data = await response.json();
+
+              // Filtering the data for event_type_id of 4
+              data = data.filter(eventProgram => eventProgram.event_type_id === 4);
               setEventPrograms(data);
           } catch (err) {
               setError(prev => ({ ...prev, eventPrograms: err.message }));
@@ -109,7 +112,7 @@ const FormSubmission = () => {
             if (!response.ok) throw new Error('Failed to fetch event dates.');
             const data = await response.json();
             setEventDates(data);
-            // console.log("dates: ", data)
+
         } catch (err) {
             console.error(err.message);
         }
@@ -315,6 +318,7 @@ const FormSubmission = () => {
               throw new Error('Network response was not ok:', Error);
           }
           setSubmitSuccess(true);
+          console.log("form data: ", formData)
           // Log success and clear form
           setFormData({
               first_name: '',

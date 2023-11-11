@@ -9,7 +9,7 @@ from typing import Optional
 import os
 # JWT Configurations
 
-SECRET_KEY = os.getenv("SECRET_KEY")
+SECRET_KEY = os.getenv("SIGNING_KEY")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
 
@@ -84,8 +84,6 @@ def requires_permission(action: str, resource: str):
         
         repo = AppUserRepo()
         has_permission = repo.check_permission_query(current_user.type_id, action, resource)
-        print("check_permission: ",has_permission)
-        print("current user: ",current_user.type_id,"action: ", action,"resource: ", resource)
 
         if not has_permission:
             raise HTTPException(status_code=401, detail="Access Forbidden: Insufficient Permissions")
