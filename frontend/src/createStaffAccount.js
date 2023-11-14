@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { json, useNavigate } from "react-router-dom";
 import { Form, Alert, Button, Modal } from 'react-bootstrap';
-import Select from 'react-select';
 import NavbarComponent from './Nav';
-import { useAuth } from "./AuthContext";
+import { useAuth } from "./store/AuthContext";
 import { backendURL } from './IPaddress';
-import { AuthProvider } from './AuthContext';
+
 
 function NewAccountForm() {
   const [formData, setFormData] = useState({
@@ -24,20 +23,21 @@ function NewAccountForm() {
     type_id: ''
   });
   const [passwordError, setPasswordError] = useState('');
-  const {token} = useAuth();
+  const {tokens} = useAuth();
   const [confirmPassword, setConfirmPassword] = useState('');
   const [userTypes, setUserTypes] = useState([]);
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [submittedData, setSubmittedData ] = useState({});
+  const {authState} = useAuth();
+  const navigate = useNavigate();
+
 
   useEffect (() => {
     const fetchType_id = async () => {
         const url = `${backendURL}/api/usertypes`;
         const response = await fetch(url, {
             method: 'GET', 
-            headers: {
-                'Authorization':`Bearer ${token}`
-            }
+            credentials: 'include',
         })
         if (response.ok) {
             const data = await response.json();
@@ -49,6 +49,12 @@ function NewAccountForm() {
     fetchType_id();
   },
   []);
+  useEffect(() => {
+    if (!authState) {
+        navigate('/login');
+    }
+    // Dependency array includes authState to react to its changes
+}, [authState, navigate]);
 
 
   const handleChange = (e) => {
@@ -105,10 +111,10 @@ function NewAccountForm() {
         const response = await fetch(`${backendURL}/api/admin-users`, {
             method: 'POST',
             headers: {
-                'Authorization':`Bearer ${token}`,
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(preparedFormData)
+            credentials: 'include',
+            body: JSON.stringify(preparedFormData),
         });
         if (response.ok) {
             setSubmittedData(preparedFormData);
@@ -142,7 +148,8 @@ function NewAccountForm() {
   };
 
   return (
-    <div className="center-form">
+    <div>
+    {authState && (<div className="center-form">
     <NavbarComponent/>
     <div>
         <h2>Creating new staff account</h2>
@@ -307,6 +314,7 @@ function NewAccountForm() {
                     </Button>
                 </Modal.Footer>
             </Modal>
+    </div>)};
     </div>
   );
 }

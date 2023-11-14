@@ -3,12 +3,9 @@ import Select from 'react-select';
 import { Form, Button, Alert, Modal } from 'react-bootstrap';
 import './CSS/FormSubmission.css';
 import { backendURL } from './IPaddress';
-// for Private we need the form to say "private school students do not qualify for the 
-// free POPS funding provided by this program. Please reach out to the UFOMT box office for a 50% off student discount"
+import { useAuth } from './store/AuthContext';
+import NavbarComponent from './Nav'
 
-// for homeschool, they also need to reach out to pam (email) for free dress rehersal tickets. 
-// will be told NO for college, community, preschool,
-// Only k-12 public school students and certified public school teachers qualify for the POPS funding provided by this program
 const FormSubmission = () => {
     const [formData, setFormData] = useState({
         first_name: '',
@@ -50,6 +47,8 @@ const FormSubmission = () => {
     const [disableSubmit, setDisableSubmit] = useState(false);
     const [ineligibleGradeModal, setIneligibleGradeModal] = useState(false);
     const [submitSuccess, setSubmitSuccess ] = useState(false);
+    const [loggedIn, setLoggedIn] = useState(false);
+    const { authState } = useAuth();
 
 
     // Fetch data from APIs
@@ -345,6 +344,7 @@ const FormSubmission = () => {
   
     return (
         <div  className='center-form'>
+            {authState && <NavbarComponent />}
         <Form onSubmit={handleSubmit} className="my-form">
         {error.grades && <Alert variant="danger">{error.grades}</Alert>}
         {error.schools && <Alert variant="danger">{error.schools}</Alert>}

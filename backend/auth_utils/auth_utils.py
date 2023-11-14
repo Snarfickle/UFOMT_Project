@@ -16,6 +16,7 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 60
 # Pydantic models for token handling
 class Token(BaseModel):
     access_token: str
+    refresh_token: str
     token_type: str
 
 class TokenData(BaseModel):
@@ -26,14 +27,28 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 # Function to encode the user data into a JWT token
 def token_encoder(user_id: int):
-    to_encode = {"exp": datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES), "user_id": user_id}
-    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
-    return encoded_jwt
+    access_token_expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_payload = {"exp": access_token_expire, "user_id": user_id}
+    access_token = jwt.encode(access_payload, SECRET_KEY, algorithm=ALGORITHM)
+
+    refresh_token_expire = datetime.utcnow() + timedelta(days=7)  # Or any suitable duration
+    refresh_payload = {"exp": refresh_token_expire, "user_id": user_id}
+    refresh_token = jwt.encode(refresh_payload, SECRET_KEY, algorithm=ALGORITHM)
+
+    return access_token, refresh_token
+
 
 # Function to decode the JWT token and get user data
-def decode_token(token: str):
+def decode_token(token: str, token_type: str = "access"):
     try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        if token_type == "access":
+            payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        elif token_type == "refresh":
+            # Different validation rules can be applied for refresh tokens if needed
+            payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        else:
+            raise HTTPException(status_code=400, detail="Invalid token type")
+
         user_id: int = payload.get("user_id")
         if user_id is None:
             raise TypeError(message="user_id is None")
@@ -46,47 +61,40 @@ def decode_token(token: str):
         raise HTTPException(status_code=401, detail="Invalid token")
 
 
-# Dependency to get the current user from the token
-async def get_current_user(
-        token: Optional[str] = Depends(oauth2_scheme)) -> Optional[AppUserIn]:
 
+# Dependency to get the current user from the http-only cookie
+async def get_current_user(request: Request) -> Optional[AppUserIn]:
     repo = AppUserRepo()
 
-    if not token:
-        return None  # Return None if no token is provided
+    access_token = request.cookies.get("access_token")
+    if not access_token:
+        return None
+
     try:
-        # Decoding the JWT token to get the user_id.
-        user_id = decode_token(token)
-        # Fetch the user details from the database using the decoded user_id.
-        user = repo.get_app_user(user_id) 
+        user_id = decode_token(access_token)
+        user = repo.get_app_user(user_id)
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
         return user
-
     except jwt.ExpiredSignatureError:
         raise HTTPException(status_code=401, detail="Token has expired")
     except jwt.InvalidTokenError:
-        raise HTTPException(status_code=401, detail="Invalid token raisins!")
+        raise HTTPException(status_code=401, detail="Invalid token")
     except Exception as e:
         raise e
 
+# Update the requires_permission decorator to use the cookie
 def requires_permission(action: str, resource: str):
-
     async def check_permission(request: Request):
-        token = request.headers.get("Authorization")
-        
-        if token is None or not token.startswith("Bearer "):
-            raise HTTPException(status_code=401, detail="Authorization token is missing")
-        token_str = token.split(" ")[1]
-        current_user = await get_current_user(token_str)
+        current_user = await get_current_user(request)
         if current_user is None:
             raise HTTPException(status_code=401, detail="Unauthorized")
-        
+
         repo = AppUserRepo()
         has_permission = repo.check_permission_query(current_user.type_id, action, resource)
 
         if not has_permission:
-            raise HTTPException(status_code=401, detail="Access Forbidden: Insufficient Permissions")
+            raise HTTPException(status_code=403, detail="Access Forbidden: Insufficient Permissions")
         return current_user
 
     def decorator(route_function):

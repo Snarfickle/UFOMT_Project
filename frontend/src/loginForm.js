@@ -1,6 +1,6 @@
-import React, { useState, useSyncExternalStore } from 'react';
+import React, { useState } from 'react';
 import { Container, Form, Button, Row, Col, Alert, Spinner } from 'react-bootstrap';
-import { useAuth } from './AuthContext';
+import { useAuth } from "./store/AuthContext";
 import { useNavigate } from 'react-router-dom';
 import { backendURL } from './IPaddress';
 
@@ -9,68 +9,32 @@ function LoginPage() {
     const [password, setPassword] = useState('');
     const [loginFailed, setLoginFailed] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    const { setToken, setUserName } = useAuth();
+    const { login } = useAuth();
     const navigate = useNavigate();
 
     const handleUserNameChange = (e) => {
-        const value = e.target.value;
-        setUserNameForm(value);
+        setUserNameForm(e.target.value);
     };
 
     const handlePasswordChange = (e) => {
-        const value = e.target.value;
-        setPassword(value);
+        setPassword(e.target.value);
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsLoading(true);
-        
-        try {
-            const response = await fetch(`${backendURL}/api/login/`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: `username=${username}&password=${encodeURIComponent(password)}`,
-            });
-            
-            const data = await response.json();
-            
-            if (response.ok) {
-                setToken(data.access_token);
-                setUserName(username);
-                setUserNameForm('');
-                setPassword('');
-                setLoginFailed(false);
-                try{
-                    
-                    const userResponse = await fetch(`${backendURL}/api/app-users/username/${username}`,
-                    {
-                        method: 'GET',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${data.access_token}`
-                        },
-                    });
-                    const userData = await userResponse.json();
-                    setUserName(userData.first_name);
-                } catch (error) {
-                    console.log('User data fetching failed:', error);
-                }
 
-                navigate('/main');  // Navigate to MainPage
-            } else {
-                setUserNameForm('');
-                setPassword('');
-                setLoginFailed(true);
-            }
+        try {
+            await login(username, password);
         } catch (error) {
-            console.log('Error:', error);
+            console.error('Login Error:', error);
+            setLoginFailed(true);
         } finally {
             setIsLoading(false);
-        }}
-
+            setUserNameForm('');
+            setPassword('');
+        }
+    };
 
     return (
         <Container fluid className="vh-100 d-flex align-items-center justify-content-center mt-3">

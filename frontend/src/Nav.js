@@ -1,17 +1,16 @@
 import React from 'react';
 import { Navbar, Button, Nav } from 'react-bootstrap';
-import { useAuth } from './AuthContext';
+import { useAuth } from './store/AuthContext';
 import { useNavigate, NavLink } from 'react-router-dom';
 
 function NavbarComponent() {
-    const { setToken, setUserName } = useAuth();
+    const { logout } = useAuth();
     const navigate = useNavigate();
 
-    const handleLogout = () => {
+    const handleLogout = async () => {
         // Clear authentication data
-        setToken(null);
-        setUserName(null);
-        
+        await logout();
+                
         // Redirect to login page
         navigate('/login');
     };
@@ -42,6 +41,13 @@ function NavbarComponent() {
                         activeclassname="active"
                     >
                         Create Staff Account
+                    </NavLink>
+                    <NavLink 
+                        to="/management" 
+                        className="nav-link" 
+                        activeclassname="active"
+                    >
+                        Management
                     </NavLink>
 
                 </Nav>
