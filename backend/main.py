@@ -28,6 +28,7 @@ import jwt
 import os
 from fastapi import FastAPI, Depends, HTTPException, Form, Response, Request
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.types import ASGIApp, Receive, Scope, Send
 from auth_utils.auth_utils import token_encoder, decode_token
 from queries.app_user_query import AppUserRepo
 import os
@@ -54,6 +55,20 @@ app.add_middleware(
     allow_methods=["*"],  # Allows all methods
     allow_headers=["*"],  # Allows all headers
 )
+class ForwardedProtoMiddleware:
+    def __init__(self, app: ASGIApp):
+        self.app = app
+
+    async def __call__(self, scope: Scope, receive: Receive, send: Send):
+        if scope["type"] == "http":
+            headers = dict(scope["headers"])
+            if b"x-forwarded-proto" in headers:
+                scheme = headers[b"x-forwarded-proto"].decode()
+                scope["scheme"] = scheme
+        await self.app(scope, receive, send)
+
+# Usage
+app.add_middleware(ForwardedProtoMiddleware)
 
 @app.on_event("startup")
 async def startup_event():

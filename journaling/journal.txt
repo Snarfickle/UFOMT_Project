@@ -18,3 +18,7 @@ HTTPS.
 I was able to fully deploy the FormSubmission table on AWS and will be working on the rest of the 
 pages. I will start to work on wire framing what I think the pages should look like and then run 
 them by Pam. 
+
+11.14.2023 I have been able to update the authorization to http cookies only. Now the site can be
+refreshed and the authorization will persist. I've updated and protected each of the sites and now
+only the FormSubmission will be available to unauthorized users (apart from the login page).

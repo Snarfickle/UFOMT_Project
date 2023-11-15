@@ -14,6 +14,7 @@ export const AuthProvider = ({ children, navigate }) => {
 
 
     const login = async (user, password) => {
+        console.log("backendURL: ",backendURL)
         const response = await fetch(`${backendURL}/api/login/`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -39,6 +40,7 @@ export const AuthProvider = ({ children, navigate }) => {
     };
 
     const checkAuth = async () => {
+        console.log("backendURL: ",backendURL)
         const response = await fetch(`${backendURL}/api/check-auth`, {
             method: 'GET',
             credentials: 'include',
@@ -69,7 +71,7 @@ export const AuthProvider = ({ children, navigate }) => {
     };
 
     const fetchUserInfo = async (userId) => {
-        console.log("username parameter: ", userId);
+        // console.log("username parameter: ", userId);
         try {
             const response = await fetch(`${backendURL}/api/app-users/id/${userId}`, {
                 method: 'GET',
@@ -78,7 +80,7 @@ export const AuthProvider = ({ children, navigate }) => {
     
             if (response.ok) {
                 const userInfo = await response.json();
-                console.log("Success! Userinfo: ", userInfo);
+                // console.log("Success! Userinfo: ", userInfo);
                 setUserData(userInfo);
                 setUserId(userInfo.user_id);
             }
