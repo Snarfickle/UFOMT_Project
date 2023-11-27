@@ -34,13 +34,6 @@ function NavbarComponent() {
                         activeclassname="active"
                     >
                         Form Submission
-                    </NavLink>                    
-                    <NavLink 
-                        to="/new-account" 
-                        className="nav-link" 
-                        activeclassname="active"
-                    >
-                        Create Staff Account
                     </NavLink>
                     <NavLink 
                         to="/management" 

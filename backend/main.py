@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends, HTTPException, Form, Cookie, Response, Request
+from fastapi import FastAPI, Depends, HTTPException, Form, Response, Request
 from fastapi.middleware.cors import CORSMiddleware
 from routers import (
     schools_router,
@@ -21,10 +21,9 @@ from routers import (
     form_submission_router,
     school_file_loader,
 )
-from auth_utils.auth_utils import token_encoder, Token
+from auth_utils.auth_utils import token_encoder
 from queries.app_user_query import AppUserRepo
 import bcrypt
-import jwt
 import os
 from fastapi import FastAPI, Depends, HTTPException, Form, Response, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -103,7 +102,7 @@ def login_for_access_token(
     access_token, refresh_token = token_encoder(user_id=user.user_id)
 
     # Set the tokens as http-only cookies
-    response.set_cookie(key="access_token", value=access_token, httponly=True, max_age=1800)  # 30 minutes
+    response.set_cookie(key="access_token", value=access_token, httponly=True, max_age=28800)  # 30 minutes
     response.set_cookie(key="refresh_token", value=refresh_token, httponly=True, max_age=604800)  # 7 days
     return {"message": "Login successful"}
 

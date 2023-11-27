@@ -19,7 +19,8 @@ const FormSubmission = () => {
         district: '',
         event_program_id: '',
         event_date_id: '',
-        grade_id: ''
+        grade_id: '',
+        additional_contact: false
     });
     const [loading, setLoading] = useState({
       grades: false,
@@ -47,7 +48,6 @@ const FormSubmission = () => {
     const [disableSubmit, setDisableSubmit] = useState(false);
     const [ineligibleGradeModal, setIneligibleGradeModal] = useState(false);
     const [submitSuccess, setSubmitSuccess ] = useState(false);
-    const [loggedIn, setLoggedIn] = useState(false);
     const { authState } = useAuth();
 
 
@@ -207,7 +207,8 @@ const FormSubmission = () => {
                 district: '',
                 event_program_id: '',
                 event_date_id: '',
-                grade_id: ''
+                grade_id: '',
+                additional_contact: false
             });
             setSelectedSchool(null);
             setSelectedEventProgram(null);} 
@@ -225,7 +226,8 @@ const FormSubmission = () => {
                 district: '',
                 event_program_id: '',
                 event_date_id: '',
-                grade_id: ''
+                grade_id: '',
+                additional_contact: false
             });
             setSelectedSchool(null);
             setSelectedEventProgram(null);
@@ -279,7 +281,8 @@ const FormSubmission = () => {
                 district: '',
                 event_program_id: '',
                 event_date_id: '',
-                grade_id: ''
+                grade_id: '',
+                additional_contact: false
             });
             setSelectedSchool(null);
             setSelectedEventProgram(null);
@@ -317,7 +320,7 @@ const FormSubmission = () => {
               throw new Error('Network response was not ok:', Error);
           }
           setSubmitSuccess(true);
-          console.log("form data: ", formData)
+        //   console.log("form data: ", formData)
           // Log success and clear form
           setFormData({
               first_name: '',
@@ -330,7 +333,8 @@ const FormSubmission = () => {
               district: '',
               event_program_id: '',
               event_date_id: '',
-              grade_id: ''
+              grade_id: '',
+              additional_contact: false
           });
           setSelectedSchool(null);
           setSelectedEventProgram(null);
@@ -477,6 +481,16 @@ const FormSubmission = () => {
                     isDisabled={!selectedEventProgram}
                     inputId="event_date_id"
                 />
+            </Form.Group>
+            <Form.Group controlId="additional_contact">
+            <Form.Label className="bold-label">Would you like to be contacted for additional tickets?</Form.Label>
+            <Form.Check 
+                type="checkbox"
+                label="Yes"
+                name="additional_contact"
+                checked={formData.additional_contact}
+                onChange={e => handleChange({target: {name: e.target.name, value: e.target.checked}})}
+            />
             </Form.Group>
 
             <Button type="submit" 

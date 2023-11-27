@@ -4,20 +4,26 @@ import { useAuth, useUserData } from "./store/AuthContext";
 import { useNavigate } from "react-router-dom";
 import './CSS/MainPage.css';
 import NavbarComponent from './Nav';
-import { backendURL } from "./IPaddress";
+
+
 
 function MainPage() {
     const [show, setShow] = useState(true);
-    const {userData } = useUserData();
+    const {userData, userType } = useUserData();
     const navigate = useNavigate();
     const {authState} = useAuth();
-       
+    
+    // console.log("console logged user data: ",userData);
+
+
+
 
     useEffect(() => {
         const timer = setTimeout(() => {
             setShow(false);
         }, 3000);
     },[]);
+
     useEffect(() => {
         if (!authState) {
             navigate('/login');
@@ -26,8 +32,9 @@ function MainPage() {
     }, [authState, navigate]);
 
 
+
     return (    
-<div>
+    <div>
     {authState && (
     <div>
     <NavbarComponent/>
@@ -40,7 +47,7 @@ function MainPage() {
         </Fade>
 
     </Container>
-    </div>)};
+    </div>)}
     </div>
     );
 }

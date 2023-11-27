@@ -12,6 +12,7 @@ class ClassroomIn(BaseModel):
     drama_mentor_id: int
     art_mentor_id: int
     music_mentor_id: int
+    school_id: int
 
 # Output model for classroom
 class ClassroomOut(ClassroomIn):
@@ -29,13 +30,14 @@ class ClassroomRepo:
                         teacher_id,
                         drama_mentor_id,
                         art_mentor_id,
-                        music_mentor_id)
-                        VALUES (%s, %s, %s, %s, %s, %s)
+                        music_mentor_id,
+                        school_id)
+                        VALUES (%s, %s, %s, %s, %s, %s, %s)
                         RETURNING *;
                     """,
                     [
                         classroom.size, classroom.grade_id, classroom.teacher_id, 
-                        classroom.drama_mentor_id, classroom.art_mentor_id, classroom.music_mentor_id
+                        classroom.drama_mentor_id, classroom.art_mentor_id, classroom.music_mentor_id, classroom.school_id
                     ]
                 )
                 record = db.fetchone()
@@ -67,13 +69,14 @@ class ClassroomRepo:
                         teacher_id = %s,
                         drama_mentor_id = %s,
                         art_mentor_id = %s,
-                        music_mentor_id = %s
+                        music_mentor_id = %s,
+                        school_id = %s
                     WHERE classroom_id = %s
                     RETURNING *;
                     """,
                     [
                         classroom.size, classroom.grade_id, classroom.teacher_id, 
-                        classroom.drama_mentor_id, classroom.art_mentor_id, classroom.music_mentor_id, classroom_id
+                        classroom.drama_mentor_id, classroom.art_mentor_id, classroom.music_mentor_id, classroom.school_id, classroom_id
                     ]
                 )
                 record = db.fetchone()

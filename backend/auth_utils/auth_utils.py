@@ -11,7 +11,7 @@ import os
 
 SECRET_KEY = os.getenv("SIGNING_KEY")
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 60
+ACCESS_TOKEN_EXPIRE_MINUTES = 480
 
 # Pydantic models for token handling
 class Token(BaseModel):

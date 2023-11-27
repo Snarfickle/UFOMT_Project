@@ -1,16 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { json, useNavigate } from "react-router-dom";
-import { Form, Alert, Button, Modal } from 'react-bootstrap';
-import NavbarComponent from './Nav';
-import { useAuth } from "./store/AuthContext";
-import { backendURL } from './IPaddress';
+import { useNavigate } from "react-router-dom";
+import { Form, Button, Modal, Table } from 'react-bootstrap';
+import { useAuth } from "../store/AuthContext";
+import { backendURL } from '../IPaddress';
 
 
 function NewAccountForm() {
   const [formData, setFormData] = useState({
     username: '', 
     password: '',
-    // confirmPassword: '',
     first_name: '',
     last_name: '',
     email: '',
@@ -22,33 +20,30 @@ function NewAccountForm() {
     employee_id: '',
     type_id: ''
   });
+  const [appUsers, setAppUsers] = useState([]);
   const [passwordError, setPasswordError] = useState('');
-  const {tokens} = useAuth();
   const [confirmPassword, setConfirmPassword] = useState('');
   const [userTypes, setUserTypes] = useState([]);
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [submittedData, setSubmittedData ] = useState({});
   const {authState} = useAuth();
+  const [showForm, setShowForm] = useState(false);
+
+  const [showModal, setShowModal] = useState(false);
+  const [userToDelete, setUserToDelete] = useState(null);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const [ searchTerm, setSearchTerm ] = useState('');
+
 
 
   useEffect (() => {
-    const fetchType_id = async () => {
-        const url = `${backendURL}/api/usertypes`;
-        const response = await fetch(url, {
-            method: 'GET', 
-            credentials: 'include',
-        })
-        if (response.ok) {
-            const data = await response.json();
-            setUserTypes(data);
-        } else {
-            console.error("the fetch at user type_id failed");
-        }
-    }
     fetchType_id();
+    fetchAppUsers();
+
   },
   []);
+  
   useEffect(() => {
     if (!authState) {
         navigate('/login');
@@ -56,6 +51,36 @@ function NewAccountForm() {
     // Dependency array includes authState to react to its changes
 }, [authState, navigate]);
 
+const filteredUsers = searchTerm ?
+appUsers.filter(
+ user => `${user.first_name} ${user.last_name}`.toLowerCase().includes(searchTerm)
+ ) : appUsers;
+
+const fetchAppUsers = async () => {
+  try {
+    const response = await fetch(`${backendURL}/api/app-users`, {
+      method: 'GET',
+      credentials: 'include'
+    });
+    const data = await response.json();
+    setAppUsers(data);
+  } catch (error) {
+    setError('Error fetching users');
+  }
+};
+const fetchType_id = async () => {
+  const url = `${backendURL}/api/usertypes`;
+  const response = await fetch(url, {
+      method: 'GET', 
+      credentials: 'include',
+  })
+  if (response.ok) {
+      const data = await response.json();
+      setUserTypes(data);
+  } else {
+      console.error("the fetch at user type_id failed");
+  }
+}
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -97,6 +122,37 @@ function NewAccountForm() {
     }
   };
 
+  const deleteUser = async (userId) => {
+    try {
+      await fetch(`${backendURL}/api/app-users/${userId}`, {
+        method: 'DELETE',
+        credentials: 'include'
+      });
+      setShowModal(false);
+      fetchAppUsers();
+    } catch (error) {
+      setError('Error deleting user');
+    }
+  };
+
+  const editUser = (user) => {
+    setFormData(user);
+    setShowForm(true);
+  };
+
+  const handleCancel = () => {
+    setFormData({/*setting back to initial state */})
+    setShowForm(false);
+  }
+  const findTypeName = (e) => {
+    const type = userTypes.find(t => t.type_id === e);
+    return type ? type.type : `Unknown`;
+  }
+
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value.toLowerCase());
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     // Handle the form submission logic here, such as sending the data to a server
@@ -105,10 +161,10 @@ function NewAccountForm() {
         type_id: parseInt(formData.type_id, 10),
         phone_number: parseInt(formData.phone_number, 10),
         zip: parseInt(formData.zip, 10)
-
     };
     try {
-        const response = await fetch(`${backendURL}/api/admin-users`, {
+      if (formData.type_id > 2){
+          const response = await fetch(`${backendURL}/api/admin-users`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -141,16 +197,62 @@ function NewAccountForm() {
             const errorData = await response.json();
             alert(errorData.detail);
             console.error("Server responded with status", response.status);
-          }
-        } catch (error) {
-          console.error("Failed to create new user", error);
+        }} else {
+          const response = await fetch(`${backendURL}/api/app-users`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include',
+            body: JSON.stringify(preparedFormData),
+        });
+        if (response.ok) {
+            setSubmittedData(preparedFormData);
+            setSubmitSuccess(true);
+            // Reset the form to initial state if needed
+            setFormData({
+              username: '', 
+              password: '',
+              confirmPassword: '',
+              first_name: '',
+              last_name: '',
+              email: '',
+              phone_number: '',
+              street: '',
+              city: '',
+              state: '',
+              zip: '',
+              employee_id: '',
+              type_id: '' // Assuming this is the correct initial state for type_id
+            });
+            setConfirmPassword('');
+            fetchAppUsers();
+          } else {
+            // Handle HTTP errors if the response is not ok
+            const errorData = await response.json();
+            alert(errorData.detail);
+            console.error("Server responded with status", response.status);
         }
+        }}
+    catch (error) {
+      console.error("Failed to create new user", error);
+      }
   };
 
   return (
     <div>
-    {authState && (<div className="center-form">
-    <NavbarComponent/>
+      <Button onClick={() => setShowForm(!showForm)}>
+        {showForm ? 'Show Users List' : 'Add New User'}
+      </Button>
+      {!showForm && (<Form.Control
+        type="text"
+        placeholder="Search by Name"
+        onChange={handleSearchChange}
+        value={searchTerm}
+        className="my-3"
+        />)}
+    {showForm ? (
+    <div className="center-form">
     <div>
         <h2>Creating new staff account</h2>
     </div>
@@ -165,7 +267,7 @@ function NewAccountForm() {
               onChange={handleChange}
               value={formData.username}
           />
-        </Form.Group>
+        </Form.Group> 
         
         <Form.Group controlId="first_name">
           <Form.Label className="bold-label">First Name</Form.Label>
@@ -298,9 +400,10 @@ function NewAccountForm() {
           {passwordError && <div className="password-error">{passwordError}</div>}
         </Form.Group>
 
-        <Button type="submit">
+        <Button type="submit" className="m-1">
                   Submit
         </Button>
+        <Button variant="secondary" onClick={handleCancel} className="ml-2" >Cancel</Button>
       </Form>
             <Modal show={submitSuccess} onHide={() => setSubmitSuccess(false)}>
                 <Modal.Header closeButton>
@@ -314,7 +417,50 @@ function NewAccountForm() {
                     </Button>
                 </Modal.Footer>
             </Modal>
-    </div>)};
+    </div>) : (
+      <div>      <Table striped bordered hover>
+      <thead>
+        <tr>
+          <th>Username</th>
+          <th>First Name</th>
+          <th>Last Name</th>
+          <th>Email</th>
+          <th>Phone</th>
+          <th>Street</th>
+          <th>City</th>
+          <th>State</th>
+          <th>ZIP</th>
+          <th>Employee ID</th>
+          <th>Employee Type</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {filteredUsers.map((user) => (
+          <tr key={user.user_id}>
+            <td>{user.username}</td>
+            <td>{user.first_name}</td>
+            <td>{user.last_name}</td>
+            <td>{user.email}</td>
+            <td>{user.phone_number}</td>
+            <td>{user.street}</td>
+            <td>{user.city}</td>
+            <td>{user.state}</td>
+            <td>{user.zip}</td>
+            <td>{user.employee_id}</td>
+            <td>{findTypeName(user.type_id)}</td>
+            <td>
+              <Button onClick={() => editUser(user)} className="m-1">Edit</Button>
+              <Button onClick={() => {
+                setUserToDelete(user.user_id);
+                setShowModal(true);
+              }} className="m-1">Delete</Button>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </Table></div>
+    )};
     </div>
   );
 }

@@ -10,11 +10,12 @@ export const useUserData = () => useContext(UserDataContext);
 export const AuthProvider = ({ children, navigate }) => {
     const [authState, setAuthState] = useState(false);
     const [userData, setUserData] = useState(null);
-    const [userId, setUserId ] = useState('');
+    const [userId, setUserId] = useState(localStorage.getItem('userId') || '');
+    const [userType, setUserType] = useState('');
 
 
     const login = async (user, password) => {
-        console.log("backendURL: ",backendURL)
+        
         const response = await fetch(`${backendURL}/api/login/`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -22,25 +23,34 @@ export const AuthProvider = ({ children, navigate }) => {
             credentials: 'include',
         });
         if (response.ok) {
-            setAuthState(true);           
+            const data = await response.json();
+            
+            setAuthState(true);
+            checkAuth();
+            fetchUserInfo();
+            fetchUserType();
             // Fetch user info right after setting the username
-            await fetchUserInfo();
+            // await fetchUserInfo();
             navigate('/main');
+        } else{
+            throw new Error("Username or password is incorrect!")
         }
     };
 
     const logout = async () => {
+        
         await fetch(`${backendURL}/api/logout/`, {
             method: 'POST',
             credentials: 'include',
         });
         setAuthState(false);
+        localStorage.removeItem('userId'); // Clear userId from localStorage
         setUserId('');
         navigate('/login');
     };
 
     const checkAuth = async () => {
-        console.log("backendURL: ",backendURL)
+        
         const response = await fetch(`${backendURL}/api/check-auth`, {
             method: 'GET',
             credentials: 'include',
@@ -48,31 +58,25 @@ export const AuthProvider = ({ children, navigate }) => {
     
         if (response.ok) {
             try {
-                const data = await response.json(); // Wait for the promise to resolve
-                // Use 'data' as needed
+                const data = await response.json();
                 setUserId(data);
+                localStorage.setItem('userId', data); // Store userId in localStorage
                 setAuthState(true);
-                try{
-                    await fetchUserInfo(data);
-                } catch (error) {
-                    console.error("Error fetching the user info", error)
-                }
-                
             } catch (error) {
                 console.error("Error reading response data:", error);
                 // Handle any errors that occur during JSON parsing
             }
         } else {
-            console.log("Failed response: ", response);
             setAuthState(false);
             // navigate('/login');
-            
         }
     };
 
-    const fetchUserInfo = async (userId) => {
-        // console.log("username parameter: ", userId);
+    const fetchUserInfo = async () => {
+        
+        // 
         try {
+            
             const response = await fetch(`${backendURL}/api/app-users/id/${userId}`, {
                 method: 'GET',
                 credentials: 'include'  // To ensure cookies are included
@@ -80,9 +84,9 @@ export const AuthProvider = ({ children, navigate }) => {
     
             if (response.ok) {
                 const userInfo = await response.json();
-                // console.log("Success! Userinfo: ", userInfo);
+                // 
                 setUserData(userInfo);
-                setUserId(userInfo.user_id);
+                // setUserId(userInfo.user_id);
             }
         } catch (error) {
             console.error('Error fetching user info:', error);
@@ -90,17 +94,42 @@ export const AuthProvider = ({ children, navigate }) => {
         }
     };
 
+    const fetchUserType = async () => {
+        
+            try {
+                const response = await fetch(`${backendURL}/api/usertypes/${userId}`,{
+                    method: 'GET',
+                    credentials: "include",
+                })
+                if (response.ok){
+                    const data = await response.json();
+                    setUserType(data);
+                } else {
+                }
+                } catch (error){
+                    console.error("Error fetching user type id: ",error)
+                }
+    };
+
+
     useEffect(() => {
-        if (authState) {
-            checkAuth();
-            fetchUserInfo();
+        if (!userId) {
+            const storedUserId = localStorage.getItem('userId');
+            if (storedUserId) {
+                setUserId(storedUserId);
+            }
         }
-    }, [authState]);
+
+        if (userId) {
+            fetchUserInfo();
+            fetchUserType();
+        }
+    }, [userId]);
 
 
     return (
-        <AuthContext.Provider value={{ authState, setAuthState, login, logout, checkAuth }}>
-            <UserDataContext.Provider value={{ userData, setUserData }}>
+        <AuthContext.Provider value={{ authState, fetchUserType, setAuthState, login, logout, checkAuth }}>
+            <UserDataContext.Provider value={{ userData, setUserData, userType }}>
                 {children}
             </UserDataContext.Provider>
         </AuthContext.Provider>

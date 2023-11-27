@@ -22,10 +22,11 @@ class FormSubmissionIn(BaseModel):
     school_type_id: Optional[int] = None
     school_genre_id: Optional[int] = None
     grade_id: int
+    additional_contact: bool
 
 # Output model for FormSubmissions
 class FormSubmissionOut(FormSubmissionIn):
-    submission_id: int
+    submission_id: int 
 
 class FormSubmissionRepo:
     def create_submission(self, submission: FormSubmissionIn) -> Union[FormSubmissionOut, dict]:
@@ -49,8 +50,9 @@ class FormSubmissionRepo:
                             school_id,
                             school_type_id,
                             school_genre_id,
-                            grade_id)
-                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                            grade_id,
+                            additional_contact)
+                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                         RETURNING *;
                         """,
                         [
@@ -58,7 +60,7 @@ class FormSubmissionRepo:
                             submission.phone_number, submission.teacher_status, submission.cactus_number, submission.guardian_name, submission.classroom_size, 
                             submission.number_of_classrooms, submission.event_program_id, submission.event_date_id, 
                             submission.school_id, submission.school_type_id, submission.school_genre_id, 
-                            submission.grade_id
+                            submission.grade_id, submission.additional_contact
                         ]
                     )
                     record = db.fetchone()
@@ -76,43 +78,44 @@ class FormSubmissionRepo:
             logging.error(f"Unexpected Error: {str(e)}")
             return {"error": "An unexpected error occurred. Please try again later."}
     
-    def get_submission(self, submissionID: int) -> Union[FormSubmissionOut, dict]:
+    def get_submission(self, submission_id: int) -> Union[FormSubmissionOut, dict]:
         with pool.connection() as conn:
             with conn.cursor(row_factory=dict_row) as db:
                 db.execute(
                     """
                     SELECT * FROM FormSubmissions
-                    WHERE SubmissionID = %s;
+                    WHERE submission_id = %s;
                     """,
-                    [submissionID]
+                    [submission_id]
                 )
                 record = db.fetchone()
                 if record is None:
                     return {"error": "No submission found with this ID."}
                 return FormSubmissionOut(**record)
     
-    def update_submission(self, submissionID: int, submission: FormSubmissionIn) -> Union[FormSubmissionOut, dict]:
+    def update_submission(self, submission_id: int, submission: FormSubmissionIn) -> Union[FormSubmissionOut, dict]:
         with pool.connection() as conn:
             with conn.cursor(row_factory=dict_row) as db:
                 db.execute(
                     """
                     UPDATE FormSubmissions
-                    SET FirstName = %s,
-                        LastName = %s,
-                        Email = %s,
-                        PhoneNumber = %s,
+                    SET first_name = %s,
+                        last_name = %s,
+                        email = %s,
+                        phone_number = %s,
                         teacher_status = %s,
                         cactus_number = %s,
-                        GuardianName = %s,
-                        ClassroomSize = %s,
-                        NumberOfClassrooms = %s,
-                        EventProgramID = %s,
-                        EventDateID = %s,
-                        SchoolID = %s,
-                        SchoolTypeID = %s,
-                        SchoolGenreID = %s,
-                        GradeID = %s
-                    WHERE SubmissionID = %s
+                        guardian_name = %s,
+                        classroom_size = %s,
+                        number_of_classrooms = %s,
+                        event_program_id = %s,
+                        event_date_id = %s,
+                        school_id = %s,
+                        school_type_id = %s,
+                        school_genre_id = %s,
+                        grade_id = %s,
+                        additional_contact = %s
+                    WHERE submission_id = %s
                     RETURNING *;
                     """,
                     [
@@ -120,7 +123,7 @@ class FormSubmissionRepo:
                         submission.phone_number, submission.teacher_status, submission.cactus_number, submission.guardian_name, submission.classroom_size, 
                         submission.number_of_classrooms, submission.event_program_id, submission.event_date_id, 
                         submission.school_id, submission.school_type_id, submission.school_genre_id, 
-                        submission.grade_id, submissionID
+                        submission.grade_id, submission.additional_contact, submission_id
                     ]
                 )
                 record = db.fetchone()
