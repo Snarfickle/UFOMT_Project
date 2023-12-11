@@ -137,7 +137,7 @@ const TeacherStatusComponent = () => {
                 <td>{status.description}</td>
                 <td>
                   <Button onClick={() => editTeacherStatus(status)} className="m-1">Edit</Button>
-                  <Button onClick={() => {
+                  <Button variant="danger" onClick={() => {
                     setStatusToDelete(status.teacher_status_id);
                     setShowModal(true);
                   }} className="m-1">Delete</Button>

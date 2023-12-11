@@ -137,7 +137,7 @@ const DistrictComponent = () => {
                 <td>{district.zipcode}</td>
                 <td>
                   <Button onClick={() => editDistrict(district)} className="m-1">Edit</Button>
-                  <Button onClick={() => {
+                  <Button variant="danger" onClick={() => {
                     setDistrictToDelete(district.district_id);
                     setShowModal(true);
                   }} className="m-1">Delete</Button>

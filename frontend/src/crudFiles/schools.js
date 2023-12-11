@@ -436,7 +436,7 @@ const SchoolComponent = () => {
                 {/* Other table columns */}
                 <td>
                   <Button onClick={() => editSchool(school)} className="m-1">Edit</Button>
-                  <Button onClick={() => {
+                  <Button variant="danger" onClick={() => {
                     setSchoolToDelete(school.school_id);
                     setShowModal(true);
                   }} className="m-1">Delete</Button>

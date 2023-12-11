@@ -137,7 +137,7 @@ const GradeComponent = () => {
                 <td>{grade.description}</td>
                 <td>
                   <Button onClick={() => editGrade(grade)} className="m-1">Edit</Button>
-                  <Button onClick={() => {
+                  <Button variant="danger" onClick={() => {
                     setGradeToDelete(grade.grade_id);
                     setShowModal(true);
                   }}>Delete</Button>

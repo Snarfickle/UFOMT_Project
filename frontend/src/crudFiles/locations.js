@@ -214,7 +214,7 @@ return (
                 <td>{location.location_description}</td>
                 <td>
                   <Button onClick={() => editLocation(location)} className="m-1">Edit</Button>
-                  <Button onClick={() => {
+                  <Button variant="danger" onClick={() => {
                     setLocationToDelete(location.location_id);
                     setShowModal(true);
                   }}>Delete</Button>

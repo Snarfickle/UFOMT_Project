@@ -136,7 +136,7 @@ const SchoolTypeComponent = () => {
                 <td>{type.description}</td>
                 <td>
                   <Button onClick={() => editType(type)} className="m-1">Edit</Button>
-                  <Button onClick={() => {
+                  <Button variant="danger" onClick={() => {
                     setTypeToDelete(type.type_id);
                     setShowModal(true);
                   }} className="m-1">Delete</Button>

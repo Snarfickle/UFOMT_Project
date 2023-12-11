@@ -138,7 +138,7 @@ return (
                 <td>{type.description}</td>
                 <td>
                   <Button onClick={() => editUserType(type)} className="m-1">Edit</Button>
-                  <Button onClick={() => {
+                  <Button variant="danger" onClick={() => {
                     setUserTypeToDelete(type.type_id);
                     setShowModal(true);
                   }} className="m-1">Delete</Button>

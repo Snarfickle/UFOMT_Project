@@ -6,7 +6,7 @@ from queries.pool import pool
 class EventTemplateIn(BaseModel):
     name: str
     location_id: int
-    description: str
+    description: Optional[str] = None
 
 # Output model for event_template
 class EventTemplateOut(EventTemplateIn):

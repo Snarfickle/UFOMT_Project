@@ -15,7 +15,8 @@ import LocationComponent from "./crudFiles/locations";
 import UserTypeComponent from "./crudFiles/appUserTypes";
 import NewAccountForm from "./crudFiles/appUser";
 import ClassroomComponent from "./crudFiles/classroom";
-import ClassroomComp from "./crudFiles/classroomComp";
+import EventType from "./crudFiles/eventTypes";
+import EventTemplateComponent from "./crudFiles/eventTemplate";
 
 function Management() {
     const {authState, userType } = useAuth();
@@ -36,6 +37,10 @@ function Management() {
     const [showUserType, setShowUserType] = useState(false);
     const [showNewAccountForm, setShowNewAccountForm] = useState(false);
     const [showClassroom, setShowClassroom] = useState(false);
+    const [showEventType, setEventType] = useState(false);
+    const [showEventTemplate, setEventTemplate] = useState(false);
+    
+
 
 
     const onSchoolUpload = async () => {
@@ -283,10 +288,16 @@ function Management() {
         {toggleButtonText(showUserType, "User Type")}
       </Button>
       <Button variant={toggleButtonStyle(showNewAccountForm)} onClick={() => setShowNewAccountForm(!showNewAccountForm)} className="m-1">
-        {toggleButtonText(showNewAccountForm, "New Account Form")}
+        {toggleButtonText(showNewAccountForm, "User Accounts")}
       </Button>
       <Button variant={toggleButtonStyle(showClassroom)} onClick={() => setShowClassroom(!showClassroom)} className="m-1">
         {toggleButtonText(showClassroom, "Classroom")}
+      </Button>
+      <Button variant={toggleButtonStyle(showEventType)} onClick={() => setEventType(!showEventType)} className="m-1">
+        {toggleButtonText(showEventType, "Event Type")}
+      </Button>
+      <Button variant={toggleButtonStyle(showEventTemplate)} onClick={() => setEventTemplate(!showEventTemplate)} className="m-1">
+        {toggleButtonText(showEventTemplate, "Event Template")}
       </Button>
         {showDistrict && <DistrictComponent />}
         {showSchool && <SchoolComponent />}
@@ -298,6 +309,9 @@ function Management() {
         {showUserType && <UserTypeComponent />}
         {showNewAccountForm && <NewAccountForm />}
         {showClassroom && <ClassroomComponent />}
+        {showEventType && <EventType />}
+        {showEventTemplate && <EventTemplateComponent />}
+
 
     </div>) : (<div><h1>Please refresh the page and login!</h1></div>)}
 

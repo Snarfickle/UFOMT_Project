@@ -25,13 +25,14 @@ const ClassroomComponent = () => {
   const [ mentors, setMentors ] = useState([]);
   const [ teachers, setTeachers ] = useState([]);
   const [teacherSearch, setTeacherSearch] = useState("");
-  const [selectedTeacherName, setSelectedTeacherName] = useState('');
+  // const [selectedTeacherName, setSelectedTeacherName] = useState('');
   const [dramaMentorSearch, setDramaMentorSearch] = useState("");
   const [artMentorSearch, setArtMentorSearch] = useState("");
   const [musicMentorSearch, setMusicMentorSearch] = useState("");
-  const [selectedDramaMentorName, setSelectedDramaMentorName] = useState('');
-  const [selectedArtMentorName, setSelectedArtMentorName] = useState('');
-  const [selectedMusicMentorName, setSelectedMusicMentorName] = useState('');
+  const [selectedTeacher, setSelectedTeacher] = useState(null);
+  const [selectedDramaMentor, setSelectedDramaMentor] = useState(null);
+  const [selectedArtMentor, setSelectedArtMentor] = useState(null);
+  const [selectedMusicMentor, setSelectedMusicMentor] = useState(null);
   const [ grades, setGrades ] = useState([]);
   const [ineligibleGradeModal, setIneligibleGradeModal] = useState(false);
   const [disableSubmit, setDisableSubmit] = useState(false);
@@ -41,6 +42,9 @@ const ClassroomComponent = () => {
   const [selectedDistrict, setSelectedDistrict] = useState(null);
   const [homeSchoolModal, setHomeSchoolModal] = useState(false);
   const [privateSchoolModal, setPrivateSchoolModal] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filteredClassrooms, setFilteredClassrooms] = useState([]);
+
 
   // Authentication check
   useEffect(() => {
@@ -58,6 +62,10 @@ const ClassroomComponent = () => {
     fetchDistricts();
   }, []);
 
+  useEffect(() => {
+    settingFilteredSchools()
+  }, [searchQuery, classrooms]);
+
   const fetchSchools = async () => {
     // setLoading(prev => ({ ...prev, schools: true }));
     const response = await fetch(`${backendURL}/api/schools`);
@@ -67,6 +75,7 @@ const ClassroomComponent = () => {
     
     if (Array.isArray(data)) {
       setSchools(data);
+
   } else {
       console.error('Fetched Schools data is not an array:', data);
 
@@ -183,38 +192,34 @@ const ClassroomComponent = () => {
   }
 };
 
-  const handleMentorSelect = (mentorId, mentorType, mentorName) => {
-    setCurrentClassroom({
-      ...currentClassroom,
-      [`${mentorType}_id`]: mentorId
-    });
+const handleMentorSelect = (mentor, mentorType) => {
+  setCurrentClassroom({
+    ...currentClassroom,
+    [`${mentorType}_id`]: mentor.user_id
+  });
 
-    // Update the name of the selected mentor
-    if (mentorType === 'drama_mentor') {
-        setSelectedDramaMentorName(mentorName);
-        setDramaMentorSearch('');
-    };
-    if (mentorType === 'art_mentor') {
-        setSelectedArtMentorName(mentorName);
-        setArtMentorSearch('');
-    };
-    if (mentorType === 'music_mentor') {
-        setSelectedMusicMentorName(mentorName);
-        setMusicMentorSearch('');
-    };
-  };
-  const handleTeacherSelect = (teacherId, teacherName) => {
+  if (mentorType === 'drama_mentor') {
+    setSelectedDramaMentor(mentor);
+  } else if (mentorType === 'art_mentor') {
+    setSelectedArtMentor(mentor);
+  } else if (mentorType === 'music_mentor') {
+    setSelectedMusicMentor(mentor);
+  }
+};
+
+  const handleTeacherSelect = (teacher) => {
     setCurrentClassroom({
       ...currentClassroom,
-      teacher_id: teacherId
+      teacher_id: teacher.user_id
     });
-    setSelectedTeacherName(teacherName);
-    setTeacherSearch('');
-    };
-    const filterTeachers = (searchTerm) => {
+    setSelectedTeacher(teacher);
+  };
+
+    
+  const filterTeachers = (searchTerm) => {
         return teachers.filter(teacher =>
-            `${teacher.first_name} ${teacher.last_name}`.toLowerCase().includes(searchTerm.toLowerCase()))
-    }
+          `${teacher.first_name} ${teacher.last_name}`.toLowerCase().includes(searchTerm.toLowerCase()))
+      }
 
   const handleFormChange = (e) => {
     setCurrentClassroom({ ...currentClassroom, [e.target.name]: e.target.value });
@@ -251,6 +256,7 @@ const ClassroomComponent = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("current Classroom data: ", currentClassroom)
     if (currentClassroom.classroom_id) {
       await updateClassroom(currentClassroom.classroom_id, currentClassroom);
     } else {
@@ -282,6 +288,16 @@ const ClassroomComponent = () => {
     if (teacher) {
       return `${teacher.first_name} ${teacher.last_name}`
     }
+  }
+
+  const getSchoolName = (schoolId) => {
+    const school = schools.find(t => t.school_id === schoolId)
+    if (school) {
+      return `${school.name}`
+    } else { 
+      // console.error ("awaiting school list ");
+      // console.log ("schoolId: ", schoolId);
+  }
   }
 
   const getMentorName = (mentorId) => {
@@ -329,23 +345,77 @@ const ClassroomComponent = () => {
 
   const editClassroom = (classroom) => {
     // Set the current classroom state with the selected classroom data
+    console.log("edit classroom button data: ", classroom);
     setCurrentClassroom({
-      size: classroom.size,
-      grade_id: classroom.grade_id,
-      teacher_id: classroom.teacher_id,
-      drama_mentor_id: classroom.drama_mentor_id,
-      art_mentor_id: classroom.art_mentor_id,
-      music_mentor_id: classroom.music_mentor_id,
-      school_id: classroom.school_id
+        size: classroom.size,
+        grade_id: classroom.grade_id,
+        teacher_id: classroom.teacher_id,
+        drama_mentor_id: classroom.drama_mentor_id,
+        art_mentor_id: classroom.art_mentor_id,
+        music_mentor_id: classroom.music_mentor_id,
+        school_id: classroom.school_id
     });
-    setSelectedArtMentorName()
-  
-    // Update other relevant states, if necessary. For example, if you have dropdowns or selectors in your form, 
-    // you might need to set their states as well based on the classroom data
-  
-    // Show the form modal
+
+    // // Find and set the music mentor name if music_mentor_id is present
+    // if (classroom.music_mentor_id) {
+    //     const musicMentor = mentors.find(mentor => mentor.user_id === classroom.music_mentor_id);
+    //   if (musicMentor) {
+    //         setSelectedMusicMentorName(`${musicMentor.first_name} ${musicMentor.last_name}`);
+    //     } else {
+    //         // Handle the case where the mentor is not found
+    //         setSelectedMusicMentorName('');
+    //   }
+    // } else {
+    //     setSelectedMusicMentorName('');
+    // }
+    // // Find and set the art mentor name if art_mentor_id is present
+    // if (classroom.art_mentor_id) {
+    //   const artMentor = mentors.find(mentor => mentor.user_id === classroom.art_mentor_id);
+    //   if (artMentor) {
+    //       setSelectedArtMentorName(`${artMentor.first_name} ${artMentor.last_name}`);
+    //   } else {
+    //       // Handle the case where the mentor is not found
+    //       setSelectedArtMentorName('');
+    //   }
+    // } else {
+    //   setSelectedArtMentorName('');
+    // }
+    // // Find and set the drama mentor name if drama_mentor_id is present
+    // if (classroom.drama_mentor_id) {
+    //   const dramaMentor = mentors.find(mentor => mentor.user_id === classroom.drama_mentor_id);
+    //   if (dramaMentor) {
+    //       setSelectedDramaMentorName(`${dramaMentor.first_name} ${dramaMentor.last_name}`);
+    //   } else {
+    //       // Handle the case where the mentor is not found
+    //       setSelectedDramaMentorName('');
+    //   }
+    // } else {
+    //    setSelectedDramaMentorName('');
+    // }
+    // // Find and set the teacher name if teacher_id is present
+    // if (classroom.teacher_id) {
+    //   const teacher = teachers.find(teacher => teacher.user_id === classroom.teacher_id);
+    //   if (teacher) {
+    //       setSelectedTeacherName(`${teacher.first_name} ${teacher.last_name}`);
+    //   } else {
+    //       // Handle the case where the teacher is not found
+    //       setSelectedDramaMentorName('');
+    //   }
+    // } else {
+    //    setSelectedDramaMentorName('');
+    // }
+
     setShowForm(true);
-  };
+};
+
+  const settingFilteredSchools = () => 
+    {if (searchQuery.length > 0){setFilteredClassrooms(
+      classrooms.filter(
+        classroom => getSchoolName(classroom.school_id).toLowerCase().includes(searchQuery.toLowerCase())
+    ));
+    }else{
+      setFilteredClassrooms(classrooms);
+    }}
 
   const handleCancel = () => {
     setCurrentClassroom({/*setting back to initial state */})
@@ -358,20 +428,30 @@ const ClassroomComponent = () => {
         art_mentor_id: '', 
         music_mentor_id: ''
       });
-    setDramaMentorSearch('');
+    // setDramaMentorSearch('');
     setArtMentorSearch('');
     setMusicMentorSearch('');
-    setSelectedDramaMentorName('');
-    setSelectedArtMentorName('');
-    setSelectedMusicMentorName('');
+    // setSelectedDramaMentorName('');
+    // setSelectedArtMentorName('');
+    // setSelectedMusicMentorName('');
     
   }
+  
+
+  
 
 return (
     <div>
       <Button onClick={() => setShowForm(!showForm)}>
         {showForm ? 'Show Classrooms List' : 'Add New Classroom'}
       </Button>
+      <Form.Group controlId="search">{ showForm ?
+         <div></div> : <Form.Control
+         type="text"
+         placeholder="Search by school name..."
+         onChange={(e) => setSearchQuery(e.target.value)}
+     />}
+      </Form.Group>
   
       {showForm ? (
       <Form onSubmit={handleSubmit}>
@@ -414,93 +494,80 @@ return (
           {/* Teacher Search and Display */}
           <Form.Group controlId="teacher_search">
             <Form.Label>Teacher</Form.Label>
-            <Form.Control 
-              type="text"
-              placeholder="Search teacher"
-              value={teacherSearch}
-              onChange={(e) => setTeacherSearch(e.target.value)}
+            <Select 
+              options={teachers.map(teacher => ({
+                value: teacher.user_id,
+                label: `${teacher.first_name} ${teacher.last_name}`
+              }))}
+              value={selectedTeacher ? {
+                value: selectedTeacher.user_id, 
+                label: `${selectedTeacher.first_name} ${selectedTeacher.last_name}`
+              } : null}
+              onChange={(selectedOption) => {
+                const teacher = teachers.find(t => t.user_id === selectedOption.value);
+                handleTeacherSelect(teacher);
+              }}
             />
-            <Dropdown className="mentor-search-dropdown">
-              {teacherSearch && filterTeachers(teacherSearch).map(teacher => (
-                <Dropdown.Item 
-                  key={teacher.user_id} 
-                  onClick={() => handleTeacherSelect(teacher.user_id, `${teacher.first_name} ${teacher.last_name}`)}
-                >
-                  {`${teacher.first_name} ${teacher.last_name}`}
-                </Dropdown.Item>
-              ))}
-            </Dropdown>
-            {selectedTeacherName && <div>Selected Teacher: {selectedTeacherName}</div>}
           </Form.Group>
 
           {/* Drama Mentor Search */}
           <Form.Group controlId="drama_mentor_search">
             <Form.Label>Drama Mentor</Form.Label>
-            <Form.Control 
-              type="text"
-              placeholder="Search drama mentor"
-              value={dramaMentorSearch}
-              onChange={(e) => setDramaMentorSearch(e.target.value)}
+            <Select 
+              options={mentors.filter(mentor => mentor.drama_mentor === true).map(mentor => ({
+                value: mentor.user_id,
+                label: `${mentor.first_name} ${mentor.last_name}`
+              }))}
+              value={selectedDramaMentor ? {
+                value: selectedDramaMentor.user_id, 
+                label: `${selectedDramaMentor.first_name} ${selectedDramaMentor.last_name}`
+              } : null}
+              onChange={(selectedOption) => {
+                const mentor = mentors.find(m => m.user_id === selectedOption.value);
+                handleMentorSelect(mentor, 'drama_mentor');
+              }}
             />
-            <Dropdown className="mentor-search-dropdown">
-              {dramaMentorSearch && filterMentors(dramaMentorSearch).map(mentor => (
-                <Dropdown.Item 
-                  key={mentor.user_id} 
-                  onClick={() => handleMentorSelect(mentor.user_id, 'drama_mentor', `${mentor.first_name} ${mentor.last_name}`)}
-                >
-                  {`${mentor.first_name} ${mentor.last_name}`}
-                </Dropdown.Item>
-              ))}
-            </Dropdown>
-            {selectedDramaMentorName && <div>Selected Mentor: {selectedDramaMentorName}</div>}
           </Form.Group>
 
           {/* Art Mentor Search and Display */}
           <Form.Group controlId="art_mentor_search">
             <Form.Label>Art Mentor</Form.Label>
-            <Form.Control 
-              type="text"
-              placeholder="Search art mentor"
-              value={artMentorSearch}
-              onChange={(e) => setArtMentorSearch(e.target.value)}
+            <Select 
+              options={mentors.filter(mentor => mentor.art_mentor === true).map(mentor => ({
+                value: mentor.user_id,
+                label: `${mentor.first_name} ${mentor.last_name}`
+              }))}
+              value={selectedArtMentor ? {
+                value: selectedArtMentor.user_id, 
+                label: `${selectedArtMentor.first_name} ${selectedArtMentor.last_name}`
+              } : null}
+              onChange={(selectedOption) => {
+                const mentor = mentors.find(m => m.user_id === selectedOption.value);
+                handleMentorSelect(mentor, 'art_mentor');
+              }}
             />
-            <Dropdown className="mentor-search-dropdown">
-              {artMentorSearch && filterMentors(artMentorSearch).map(mentor => (
-                <Dropdown.Item 
-                  key={mentor.user_id} 
-                  onClick={() => handleMentorSelect(mentor.user_id, 'art_mentor', `${mentor.first_name} ${mentor.last_name}`)}
-                >
-                  {mentor.first_name} {mentor.last_name}
-                </Dropdown.Item>
-              ))}
-            </Dropdown>
-            {selectedArtMentorName && <div>Selected Mentor: {selectedArtMentorName}</div>}
           </Form.Group>
+
 
           {/* Music Mentor Search and Display */}
           <Form.Group controlId="music_mentor_search">
             <Form.Label>Music Mentor</Form.Label>
-            <Form.Control 
-              type="text"
-              placeholder="Search music mentor"
-              value={musicMentorSearch}
-              onChange={(e) => setMusicMentorSearch(e.target.value)}
+            <Select 
+              options={mentors.filter(mentor => mentor.music_mentor === true).map(mentor => ({
+                value: mentor.user_id,
+                label: `${mentor.first_name} ${mentor.last_name}`
+              }))}
+              value={selectedMusicMentor ? {
+                value: selectedMusicMentor.user_id, 
+                label: `${selectedMusicMentor.first_name} ${selectedMusicMentor.last_name}`
+              } : null}
+              onChange={(selectedOption) => {
+                const mentor = mentors.find(m => m.user_id === selectedOption.value);
+                handleMentorSelect(mentor, 'music_mentor');
+              }}
             />
-            <Dropdown className="mentor-search-dropdown">
-              {musicMentorSearch && filterMentors(musicMentorSearch).map(mentor => (
-                <Dropdown.Item 
-                  key={mentor.user_id} 
-                  onClick={() => handleMentorSelect(mentor.user_id, 'music_mentor', `${mentor.first_name} ${mentor.last_name}`)}
-                >
-                  {mentor.first_name} {mentor.last_name}
-                </Dropdown.Item>
-              ))}
-            </Dropdown>
-            {selectedMusicMentorName && <div>Selected Mentor: {selectedMusicMentorName}</div>}
           </Form.Group>
 
-          {/* Include additional form fields for grade_id, teacher_id, etc. */}
-          {/* ... */}
           <Button type="submit" className="m-1">Submit</Button>
           <Button variant="secondary" onClick={handleCancel} className="ml-2">Cancel</Button>
         </Form>
@@ -508,6 +575,7 @@ return (
         <Table striped bordered hover>
           <thead>
             <tr>
+              <th>School</th>
               <th>Classroom Size</th>
               <th>Grade</th>
               <th>Teacher</th>
@@ -518,8 +586,9 @@ return (
             </tr>
           </thead>
           <tbody>
-            {classrooms.map((classroom) => (
+            {filteredClassrooms.map((classroom) => (
               <tr key={classroom.classroom_id}>
+                <td>{getSchoolName(classroom.school_id)}</td>
                 <td>{classroom.size}</td>
                 <td>{getGradeType(classroom.grade_id)}</td>
                 <td>{getTeacherName(classroom.teacher_id)}</td>
@@ -528,7 +597,7 @@ return (
                 <td>{getMentorName(classroom.music_mentor_id)}</td>
                 <td>
                   <Button className="m-1" onClick={() => editClassroom(classroom)}>Edit</Button>
-                  <Button className="m-1" onClick={() => {
+                  <Button variant="danger" className="m-1" onClick={() => {
                     setClassroomToDelete(classroom.classroom_id);
                     setShowModal(true);
                   }}>Delete</Button>

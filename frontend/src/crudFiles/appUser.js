@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from "react-router-dom";
-import { Form, Button, Modal, Table } from 'react-bootstrap';
+import { Form, Button, Modal, Table, InputGroup } from 'react-bootstrap';
 import { useAuth } from "../store/AuthContext";
 import { backendURL } from '../IPaddress';
 
@@ -18,7 +18,10 @@ function NewAccountForm() {
     state: '',
     zip: '',
     employee_id: '',
-    type_id: ''
+    type_id: '',
+    drama_mentor: false,
+    art_mentor: false,
+    music_mentor: false
   });
   const [appUsers, setAppUsers] = useState([]);
   const [passwordError, setPasswordError] = useState('');
@@ -28,12 +31,13 @@ function NewAccountForm() {
   const [submittedData, setSubmittedData ] = useState({});
   const {authState} = useAuth();
   const [showForm, setShowForm] = useState(false);
-
+  const [editForm, setEditForm] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [userToDelete, setUserToDelete] = useState(null);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   const [ searchTerm, setSearchTerm ] = useState('');
+  const [updatePassForm, setUpdatePassForm ] = useState(false);
 
 
 
@@ -82,19 +86,28 @@ const fetchType_id = async () => {
   }
 }
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prevFormData => ({
-      ...prevFormData,
-      [name]: value
-    }));
+const handleChange = (e) => {
+  const { name, type, value, checked } = e.target;
 
-    // If either the password or confirmPassword fields are updated,
-    // clear the password error message.
-    if (name === 'password' || name === 'confirmPassword') {
+  // Determine whether the input is a checkbox or not
+  const inputValue = type === 'checkbox' ? checked : value;
+  
+  
+  
+  
+  
+  setFormData(prevFormData => ({
+      ...prevFormData,
+      [name]: inputValue
+  }));
+
+  // If either the password or confirmPassword fields are updated,
+  // clear the password error message.
+  if (name === 'password' || name === 'confirmPassword') {
       setPasswordError('');
-    }
-  };
+  }
+};
+
 
   const handlePasswordChange = (e) => {
     handleChange(e); // This updates the state for the password or confirmPassword
@@ -122,9 +135,10 @@ const fetchType_id = async () => {
     }
   };
 
-  const deleteUser = async (userId) => {
+  const deleteUser = async () => {
+
     try {
-      await fetch(`${backendURL}/api/app-users/${userId}`, {
+      await fetch(`${backendURL}/api/app-users/${userToDelete}`, {
         method: 'DELETE',
         credentials: 'include'
       });
@@ -135,14 +149,44 @@ const fetchType_id = async () => {
     }
   };
 
-  const editUser = (user) => {
-    setFormData(user);
-    setShowForm(true);
-  };
+const editUser = (user) => {
+  // Exclude the password field from the user object
+  const { password, ...userWithoutPassword } = user;
+  
+  setEditForm(true);
+
+  // Combine both state updates into a single call to setFormData
+  setFormData(prevFormData => ({
+    ...prevFormData,
+    ...userWithoutPassword,
+    password: '',
+    confirmPassword: ''
+  }));
+
+  setShowForm(true);
+};
+
+const updatePassword = (passwordData) => {
+  // Assuming passwordData contains the new password and confirmPassword
+  const { newPassword, newConfirmPassword } = passwordData;
+
+  setFormData(prevFormData => ({
+    ...prevFormData,
+    password: newPassword,
+    confirmPassword: newConfirmPassword
+  }));
+  console.log("update button clicked!")
+ setUpdatePassForm(true);
+ setShowForm(true);
+};
+
+
 
   const handleCancel = () => {
     setFormData({/*setting back to initial state */})
     setShowForm(false);
+    setEditForm(false);
+    setUpdatePassForm(false);
   }
   const findTypeName = (e) => {
     const type = userTypes.find(t => t.type_id === e);
@@ -162,8 +206,60 @@ const fetchType_id = async () => {
         phone_number: parseInt(formData.phone_number, 10),
         zip: parseInt(formData.zip, 10)
     };
+    
     try {
-      if (formData.type_id > 2){
+      if (updatePassForm){
+        const response = await fetch(`${backendURL}/api/app-users/${formData.user_id}`, { // replace formData.id with the identifier of the user being edited
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          credentials: 'include',
+          body: JSON.stringify(preparedFormData),
+        });
+        if (response.ok) {
+          setFormData({
+            password: '',
+            confirmPassword: ''
+          })
+          setUpdatePassForm(false);
+        }
+        
+      }
+      if (editForm) {
+        const response = await fetch(`${backendURL}/api/app-users/${formData.user_id}`, { // replace formData.id with the identifier of the user being edited
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          credentials: 'include',
+          body: JSON.stringify(preparedFormData),
+        });
+        if (response.ok) {
+          setFormData({
+            username: '', 
+            password: '',
+            confirmPassword: '',
+            first_name: '',
+            last_name: '',
+            email: '',
+            phone_number: '',
+            street: '',
+            city: '',
+            state: '',
+            zip: '',
+            employee_id: '',
+            type_id: '', // Assuming this is the correct initial state for type_id
+            drama_mentor: false,
+            art_mentor: false,
+            music_mentor: false
+          })
+          setShowForm(false);
+          fetchAppUsers();
+
+        }
+        // Further processing after the PUT request...
+      } else if (formData.type_id > 2){
           const response = await fetch(`${backendURL}/api/admin-users`, {
             method: 'POST',
             headers: {
@@ -189,7 +285,10 @@ const fetchType_id = async () => {
               state: '',
               zip: '',
               employee_id: '',
-              type_id: '' // Assuming this is the correct initial state for type_id
+              type_id: '', // Assuming this is the correct initial state for type_id
+              drama_mentor: false,
+              art_mentor: false,
+              music_mentor: false
             });
             setConfirmPassword('');
           } else {
@@ -223,7 +322,10 @@ const fetchType_id = async () => {
               state: '',
               zip: '',
               employee_id: '',
-              type_id: '' // Assuming this is the correct initial state for type_id
+              type_id: '', // Assuming this is the correct initial state for type_id
+              drama_mentor: false,
+              art_mentor: false,
+              music_mentor: false
             });
             setConfirmPassword('');
             fetchAppUsers();
@@ -254,7 +356,7 @@ const fetchType_id = async () => {
     {showForm ? (
     <div className="center-form">
     <div>
-        <h2>Creating new staff account</h2>
+      {updatePassForm ? <h2>Update Password</h2> : (!editForm ? <h2>Creating New Account</h2> : <h2>Updating Account</h2>)}
     </div>
 
       <Form onSubmit={handleSubmit} className="my-form">
@@ -377,8 +479,38 @@ const fetchType_id = async () => {
               onChange={handleChange}
               value={formData.employee_id}
           />
-        </Form.Group> 
-        <Form.Group controlId="password">
+        </Form.Group>
+        <Form.Group controlId="drama_mentor">
+        <Form.Label className="bold-label">Drama Mentor?</Form.Label>
+        <Form.Check 
+            type="checkbox"
+            label={`${formData.first_name} ${formData.last_name} is a drama mentor`}
+            name="drama_mentor"
+            onChange={handleChange}
+            checked={formData.drama_mentor}
+        />
+        </Form.Group>
+        <Form.Group controlId="art_mentor">
+          <Form.Label className="bold-label">Art Mentor?</Form.Label>
+          <Form.Check 
+              type="checkbox"
+              label={`${formData.first_name} ${formData.last_name} is an art mentor`}
+              name="art_mentor"
+              onChange={handleChange}
+              checked={formData.art_mentor}
+          />
+        </Form.Group>
+        <Form.Group controlId="music_mentor">
+          <Form.Label className="bold-label">Music Mentor?</Form.Label>
+          <Form.Check 
+              type="checkbox"
+              label={`${formData.first_name} ${formData.last_name} is a music mentor`}
+              name="music_mentor"
+              onChange={handleChange}
+              checked={formData.music_mentor}
+          />
+        </Form.Group>
+        {!updatePassForm ? <div><Form.Group controlId="password">
           <Form.Label className="bold-label">Password</Form.Label>
           <Form.Control 
               type="password"
@@ -398,7 +530,7 @@ const fetchType_id = async () => {
               value={confirmPassword}
           />
           {passwordError && <div className="password-error">{passwordError}</div>}
-        </Form.Group>
+        </Form.Group></div> : <div></div>}
 
         <Button type="submit" className="m-1">
                   Submit
@@ -432,6 +564,9 @@ const fetchType_id = async () => {
           <th>ZIP</th>
           <th>Employee ID</th>
           <th>Employee Type</th>
+          <th>Drama Mentor</th>
+          <th>Art Mentor</th>
+          <th>Music Mentor</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -449,9 +584,13 @@ const fetchType_id = async () => {
             <td>{user.zip}</td>
             <td>{user.employee_id}</td>
             <td>{findTypeName(user.type_id)}</td>
+            <td>{user.drama_mentor ? '\u2713' : ''}</td>
+      <td>{user.art_mentor ? '\u2713' : ''}</td>
+      <td>{user.music_mentor ? '\u2713' : ''}</td>
             <td>
               <Button onClick={() => editUser(user)} className="m-1">Edit</Button>
-              <Button onClick={() => {
+              <Button onClick={() => updatePassword(user)} className="m-1">Update Password</Button>
+              <Button variant="danger" onClick={() => {
                 setUserToDelete(user.user_id);
                 setShowModal(true);
               }} className="m-1">Delete</Button>
@@ -460,7 +599,21 @@ const fetchType_id = async () => {
         ))}
       </tbody>
     </Table></div>
-    )};
+    )}
+      <Modal show={showModal} onHide={() => setShowModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirm Deletion</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Are you sure you want to delete this user?</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowModal(false)}>
+            Close
+          </Button>
+          <Button variant="danger" onClick={deleteUser}>
+            Delete
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 }

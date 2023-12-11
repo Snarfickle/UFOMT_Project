@@ -138,7 +138,7 @@ const SchoolGenreComponent = () => {
                     <td>{genre.description}</td>
                     <td>
                     <Button onClick={() => editGenre(genre)} className="m-1">Edit</Button>
-                    <Button onClick={() => {
+                    <Button variant="danger" onClick={() => {
                         setGenreToDelete(genre.genre_id);
                         setShowModal(true);
                     }}>Delete</Button>

@@ -28,6 +28,9 @@ class AppUserIn(BaseModel):
     city: Optional[str] = None
     state: Optional[str] = None
     zip: Optional[int] = None
+    art_mentor: Optional[bool] = None
+    drama_mentor: Optional[bool] = None
+    music_mentor: Optional[bool] = None
 
 
 
@@ -36,6 +39,32 @@ class AppUserIn(BaseModel):
 class AppUserOut(AppUserIn):
     user_id: int
     updated_at: datetime
+
+class AppUserUpdate(BaseModel):
+    username: str
+    type_id: int
+    first_name: str
+    last_name: str
+    email: str
+    phone_number: int
+    created_date: Optional[date] = None
+    terminated_date: Optional[date] = None
+    grade_id: Optional[int] = None
+    school_id: Optional[int] = None
+    cactus_id: Optional[str] = None
+    active: Optional[bool] = None
+    notes: Optional[str] = None
+    teacher_status_id: Optional[int] = None
+    parent_guardian: Optional[str] = None
+    employee_id: Optional[str] = None
+    street: Optional[str] = None
+    city: Optional[str] = None
+    state: Optional[str] = None
+    zip: Optional[int] = None
+    art_mentor: Optional[bool] = None
+    drama_mentor: Optional[bool] = None
+    music_mentor: Optional[bool] = None
+
 
 
 
@@ -72,9 +101,12 @@ class AppUserRepo:
                             street,
                             city,
                             state,
-                            zip
+                            zip,
+                            art_mentor,
+                            drama_mentor,
+                            music_mentor
                         )
-                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                         RETURNING *;
                         """,
                         [
@@ -98,7 +130,10 @@ class AppUserRepo:
                             user.street,
                             user.city,
                             user.state,
-                            user.zip
+                            user.zip,
+                            user.art_mentor,
+                            user.drama_mentor,
+                            user.music_mentor
                         ]
                     )
                     record = db.fetchone()
@@ -125,7 +160,7 @@ class AppUserRepo:
                     return {"error": "No app user found with this ID."}
                 return AppUserOut(**record)
             
-    def update_app_user(self, user_id: int, user: AppUserIn) -> Union[AppUserOut, dict]:
+    def update_app_user(self, user_id: int, user: AppUserUpdate) -> Union[AppUserOut, dict]:
         with pool.connection() as conn:
             with conn.cursor(row_factory=dict_row) as db:
                 # SQL query for updating an app user by ID
@@ -134,7 +169,6 @@ class AppUserRepo:
                     UPDATE app_user
                     SET 
                     username = %s,
-                    password = %s,
                     type_id = %s,
                     first_name = %s,
                     last_name = %s,
@@ -153,13 +187,15 @@ class AppUserRepo:
                     street = %s,
                     city = %s,
                     state = %s,
-                    zip = %s
+                    zip = %s,
+                    art_mentor = %s,
+                    drama_mentor = %s,
+                    music_mentor = %s
                     WHERE user_id = %s
                     RETURNING *;
                     """,
                     [
                         user.username,
-                        user.password,
                         user.type_id,
                         user.first_name,
                         user.last_name,
@@ -179,6 +215,9 @@ class AppUserRepo:
                         user.city,
                         user.state,
                         user.zip,
+                        user.art_mentor,
+                        user.drama_mentor,
+                        user.music_mentor,
                         user_id
                     ]
                 )
