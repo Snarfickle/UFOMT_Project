@@ -303,9 +303,9 @@ const FormSubmission = () => {
             ...formData,
             [name]: value
         });
-        if (formData.teacher_status == true) {
-            setTeacherStatus(`Teacher's`)
-        };
+        // if (formData.teacher_status == true) {
+        //     setTeacherStatus(`Teacher's`)
+        // };
     };
 
     const handleSubmit = async (e) => {
@@ -354,7 +354,7 @@ const FormSubmission = () => {
         <div  className='center-form'>
             {authState && <NavbarComponent />}
         <Form onSubmit={handleSubmit} className="my-form">
-            <h3>{formData.teacher_status ? teacherStatus : `Guardian`} Information</h3>
+            <h3>{formData.teacher_status ? `Teacher's` : `Guardian's`} Information</h3>
         {error.grades && <Alert variant="danger">{error.grades}</Alert>}
         {error.schools && <Alert variant="danger">{error.schools}</Alert>}
         {error.eventPrograms  && <Alert variant="danger">{error.eventPrograms }</Alert>}
@@ -371,7 +371,7 @@ const FormSubmission = () => {
             </Form.Group>
 
             <Form.Group controlId="first_name">
-                <Form.Label className="bold-label">{formData.teacher_status ? teacherStatus : `Guardian's`} First Name</Form.Label>
+                <Form.Label className="bold-label">{formData.teacher_status ? `Teacher's` : `Guardian's`} First Name</Form.Label>
                 <Form.Control 
                     type="text"
                     placeholder="Enter first name"
@@ -382,7 +382,7 @@ const FormSubmission = () => {
             </Form.Group>
 
             <Form.Group controlId="last_name">
-                <Form.Label className="bold-label">{formData.teacher_status ? teacherStatus : `Guardian's`} Last Name</Form.Label>
+                <Form.Label className="bold-label">{formData.teacher_status ? `Teacher's` : `Guardian's`} Last Name</Form.Label>
                 <Form.Control 
                     type="text"
                     placeholder="Enter last name"
@@ -392,7 +392,7 @@ const FormSubmission = () => {
                 />
             </Form.Group>
             <Form.Group controlId="email">
-                <Form.Label className="bold-label">{formData.teacher_status ? teacherStatus : `Guardian's`} Email</Form.Label>
+                <Form.Label className="bold-label">{formData.teacher_status ? `Teacher's` : `Guardian's`} Email</Form.Label>
                 <Form.Control 
                     type="text"
                     placeholder="Enter Email"
@@ -403,7 +403,7 @@ const FormSubmission = () => {
                 />
             </Form.Group>
             <Form.Group controlId="phone_number">
-                <Form.Label className="bold-label">{formData.teacher_status ? teacherStatus : `Guardian's`} Phone number</Form.Label>
+                <Form.Label className="bold-label">{formData.teacher_status ? `Teacher's` : `Guardian's`} Phone number</Form.Label>
                 <Form.Control 
                     type="text"
                     placeholder="Enter Phone number"
