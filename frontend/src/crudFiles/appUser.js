@@ -218,8 +218,6 @@ const updatePassword = (user) => {
           credentials: 'include',
           body: JSON.stringify(preparedFormData),
         });
-        console.log("form data: ", preparedFormData);
-        console.log("response: ", response)
         if (response.ok) {
           setFormData({
             password: ''

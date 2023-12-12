@@ -13,7 +13,7 @@ class FormSubmissionIn(BaseModel):
     phone_number: str
     teacher_status: bool
     cactus_number: Optional[str] = None
-    guardian_name: Optional[str] = None
+    student_name: Optional[str] = None
     classroom_size: Optional[int] = None
     number_of_classrooms: Optional[int] = None
     event_program_id: int
@@ -42,7 +42,7 @@ class FormSubmissionRepo:
                             phone_number,
                             teacher_status,
                             cactus_number,
-                            guardian_name,
+                            student_name,
                             classroom_size,
                             number_of_classrooms,
                             event_program_id,
@@ -57,7 +57,7 @@ class FormSubmissionRepo:
                         """,
                         [
                             submission.first_name, submission.last_name, submission.email, 
-                            submission.phone_number, submission.teacher_status, submission.cactus_number, submission.guardian_name, submission.classroom_size, 
+                            submission.phone_number, submission.teacher_status, submission.cactus_number, submission.student_name, submission.classroom_size, 
                             submission.number_of_classrooms, submission.event_program_id, submission.event_date_id, 
                             submission.school_id, submission.school_type_id, submission.school_genre_id, 
                             submission.grade_id, submission.additional_contact
@@ -105,7 +105,7 @@ class FormSubmissionRepo:
                         phone_number = %s,
                         teacher_status = %s,
                         cactus_number = %s,
-                        guardian_name = %s,
+                        student_name = %s,
                         classroom_size = %s,
                         number_of_classrooms = %s,
                         event_program_id = %s,
@@ -120,7 +120,7 @@ class FormSubmissionRepo:
                     """,
                     [
                         submission.first_name, submission.last_name, submission.email, 
-                        submission.phone_number, submission.teacher_status, submission.cactus_number, submission.guardian_name, submission.classroom_size, 
+                        submission.phone_number, submission.teacher_status, submission.cactus_number, submission.student_name, submission.classroom_size, 
                         submission.number_of_classrooms, submission.event_program_id, submission.event_date_id, 
                         submission.school_id, submission.school_type_id, submission.school_genre_id, 
                         submission.grade_id, submission.additional_contact, submission_id

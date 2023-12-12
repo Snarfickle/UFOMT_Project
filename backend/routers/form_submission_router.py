@@ -12,7 +12,6 @@ def create_form_submission(
     submission: FormSubmissionIn,
     repo: FormSubmissionRepo = Depends(FormSubmissionRepo)
 ):
-    print("submission: ",submission)
     result = repo.create_submission(submission)
     # if "error" in result:
     #     raise HTTPException(status_code=400, detail=result["error"])

@@ -12,7 +12,7 @@ const FormSubmission = () => {
         last_name: '',
         email: '',
         phone_number: '',
-        guardian_name: '',
+        student_name: '',
         teacher_status: false,
         cactus_number: '',
         school_id: '',
@@ -49,6 +49,7 @@ const FormSubmission = () => {
     const [ineligibleGradeModal, setIneligibleGradeModal] = useState(false);
     const [submitSuccess, setSubmitSuccess ] = useState(false);
     const { authState } = useAuth();
+    const [ teacherStatus, setTeacherStatus ] = useState(false);
 
 
     // Fetch data from APIs
@@ -302,6 +303,9 @@ const FormSubmission = () => {
             ...formData,
             [name]: value
         });
+        if (formData.teacher_status == true) {
+            setTeacherStatus(`Teacher's`)
+        };
     };
 
     const handleSubmit = async (e) => {
@@ -350,13 +354,24 @@ const FormSubmission = () => {
         <div  className='center-form'>
             {authState && <NavbarComponent />}
         <Form onSubmit={handleSubmit} className="my-form">
+            <h3>{formData.teacher_status ? teacherStatus : `Guardian`} Information</h3>
         {error.grades && <Alert variant="danger">{error.grades}</Alert>}
         {error.schools && <Alert variant="danger">{error.schools}</Alert>}
         {error.eventPrograms  && <Alert variant="danger">{error.eventPrograms }</Alert>}
         {error.eventDates  && <Alert variant="danger">{error.eventDates }</Alert>}
+            <Form.Group controlId="isTeacher">
+                <Form.Label className="bold-label">Are you a Teacher?</Form.Label>
+                <Form.Check 
+                    type="checkbox"
+                    label="Yes"
+                    name="teacher_status"
+                    checked={formData.teacher_status}
+                    onChange={e => handleChange({target: {name: e.target.name, value: e.target.checked}})}
+                />
+            </Form.Group>
 
             <Form.Group controlId="first_name">
-                <Form.Label className="bold-label">First Name</Form.Label>
+                <Form.Label className="bold-label">{formData.teacher_status ? teacherStatus : `Guardian's`} First Name</Form.Label>
                 <Form.Control 
                     type="text"
                     placeholder="Enter first name"
@@ -367,7 +382,7 @@ const FormSubmission = () => {
             </Form.Group>
 
             <Form.Group controlId="last_name">
-                <Form.Label className="bold-label">Last Name</Form.Label>
+                <Form.Label className="bold-label">{formData.teacher_status ? teacherStatus : `Guardian's`} Last Name</Form.Label>
                 <Form.Control 
                     type="text"
                     placeholder="Enter last name"
@@ -377,7 +392,7 @@ const FormSubmission = () => {
                 />
             </Form.Group>
             <Form.Group controlId="email">
-                <Form.Label className="bold-label">Email</Form.Label>
+                <Form.Label className="bold-label">{formData.teacher_status ? teacherStatus : `Guardian's`} Email</Form.Label>
                 <Form.Control 
                     type="text"
                     placeholder="Enter Email"
@@ -388,7 +403,7 @@ const FormSubmission = () => {
                 />
             </Form.Group>
             <Form.Group controlId="phone_number">
-                <Form.Label className="bold-label">Phone number</Form.Label>
+                <Form.Label className="bold-label">{formData.teacher_status ? teacherStatus : `Guardian's`} Phone number</Form.Label>
                 <Form.Control 
                     type="text"
                     placeholder="Enter Phone number"
@@ -397,18 +412,9 @@ const FormSubmission = () => {
                     value={formData.phone_number}
                 />
             </Form.Group>
-            <Form.Group controlId="isTeacher">
-            <Form.Label className="bold-label">Are you a Teacher?</Form.Label>
-            <Form.Check 
-                type="checkbox"
-                label="Yes"
-                name="teacher_status"
-                checked={formData.teacher_status}
-                onChange={e => handleChange({target: {name: e.target.name, value: e.target.checked}})}
-            />
-            </Form.Group>
 
-            {formData.teacher_status ? (
+
+            {formData.teacher_status && (
                 <Form.Group controlId="cactus_number">
                     <Form.Label className="bold-label">Cactus Number</Form.Label>
                     <Form.Control 
@@ -419,18 +425,19 @@ const FormSubmission = () => {
                         onChange={handleChange}
                     />
                 </Form.Group>
-            ) : (
-                <Form.Group controlId="guardian_name">
-                    <Form.Label className="bold-label">Guardian's Name</Form.Label>
+            )}
+             {/* : (
+                <Form.Group controlId="student_name">
+                    <Form.Label className="bold-label">Student's Name</Form.Label>
                     <Form.Control 
                         type="text"
-                        placeholder="Enter Guardian's Name"
-                        name="guardian_name"
-                        value={formData.guardian_name || ''}
+                        placeholder="Enter Student's Name"
+                        name="student_name"
+                        value={formData.student_name || ''}
                         onChange={handleChange}
                     />
                 </Form.Group>
-            )}
+            )} */}
 
             <Form.Group controlId="grade_id">
                 <Form.Label className="bold-label">Grade</Form.Label>
@@ -493,7 +500,7 @@ const FormSubmission = () => {
             />
             </Form.Group>
 
-            <Button type="submit" 
+            <Button className="m-3" type="submit" 
               disabled={
               !formData.first_name || !formData.last_name
               || !formData.email || !formData.phone_number
