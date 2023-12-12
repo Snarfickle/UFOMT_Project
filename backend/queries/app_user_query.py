@@ -33,8 +33,6 @@ class AppUserIn(BaseModel):
     music_mentor: Optional[bool] = None
 
 
-
-
 # Output model for AppUser
 class AppUserOut(AppUserIn):
     user_id: int
@@ -65,7 +63,9 @@ class AppUserUpdate(BaseModel):
     drama_mentor: Optional[bool] = None
     music_mentor: Optional[bool] = None
 
-
+class AppUserPassUpdate (BaseModel):
+    user_id: int
+    password: str
 
 
 class AppUserRepo:
@@ -284,3 +284,24 @@ class AppUserRepo:
                 if record is None or not record['can_access']:
                     return False
                 return True
+    def update_user_pass(self, user_id: int, user: AppUserPassUpdate) -> Union[AppUserOut, dict]:
+        with pool.connection() as conn:
+            with conn.cursor(row_factory=dict_row) as db:
+                # SQL query for updating an app user by ID
+                db.execute(
+                    """
+                    UPDATE app_user
+                    SET 
+                    password = %s
+                    WHERE user_id = %s
+                    RETURNING *;
+                    """,
+                    [
+                        user.password,
+                        user_id
+                    ]
+                )
+                record = db.fetchone()
+                if record is None:
+                    return {"error": "No app user found with this ID."}
+                return AppUserOut(**record)

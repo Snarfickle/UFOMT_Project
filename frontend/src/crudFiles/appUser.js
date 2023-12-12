@@ -166,16 +166,17 @@ const editUser = (user) => {
   setShowForm(true);
 };
 
-const updatePassword = (passwordData) => {
-  // Assuming passwordData contains the new password and confirmPassword
-  const { newPassword, newConfirmPassword } = passwordData;
+const updatePassword = (user) => {
+  // Assuming user contains the new password and confirmPassword
 
-  setFormData(prevFormData => ({
-    ...prevFormData,
-    password: newPassword,
-    confirmPassword: newConfirmPassword
-  }));
-  console.log("update button clicked!")
+  setFormData({
+    ...formData,
+    user_id: user.user_id,
+    password: '',
+    confirmPassword: ''
+  });
+
+
  setUpdatePassForm(true);
  setShowForm(true);
 };
@@ -209,7 +210,7 @@ const updatePassword = (passwordData) => {
     
     try {
       if (updatePassForm){
-        const response = await fetch(`${backendURL}/api/app-users/${formData.user_id}`, { // replace formData.id with the identifier of the user being edited
+        const response = await fetch(`${backendURL}/api/app-users/password/${formData.user_id}`, { // replace formData.id with the identifier of the user being edited
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json'
@@ -217,16 +218,18 @@ const updatePassword = (passwordData) => {
           credentials: 'include',
           body: JSON.stringify(preparedFormData),
         });
+        console.log("form data: ", preparedFormData);
+        console.log("response: ", response)
         if (response.ok) {
           setFormData({
-            password: '',
-            confirmPassword: ''
+            password: ''
           })
+          setConfirmPassword('');
           setUpdatePassForm(false);
+          setShowForm(false);
+          fetchAppUsers();
         }
-        
-      }
-      if (editForm) {
+      } else if (editForm) {
         const response = await fetch(`${backendURL}/api/app-users/${formData.user_id}`, { // replace formData.id with the identifier of the user being edited
           method: 'PUT',
           headers: {
@@ -256,19 +259,20 @@ const updatePassword = (passwordData) => {
           })
           setShowForm(false);
           fetchAppUsers();
-
         }
-        // Further processing after the PUT request...
-      } else if (formData.type_id > 2){
-          const response = await fetch(`${backendURL}/api/admin-users`, {
+      } else if (formData.type_id > 2)
+        {
+          const response = await fetch(`${backendURL}/api/admin-users`, 
+          {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             credentials: 'include',
             body: JSON.stringify(preparedFormData),
-        });
-        if (response.ok) {
+          });
+          if (response.ok) 
+          {
             setSubmittedData(preparedFormData);
             setSubmitSuccess(true);
             // Reset the form to initial state if needed
@@ -296,15 +300,18 @@ const updatePassword = (passwordData) => {
             const errorData = await response.json();
             alert(errorData.detail);
             console.error("Server responded with status", response.status);
-        }} else {
-          const response = await fetch(`${backendURL}/api/app-users`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            credentials: 'include',
-            body: JSON.stringify(preparedFormData),
-        });
+          }
+        } else 
+          {
+            const response = await fetch(`${backendURL}/api/app-users`, {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json'
+              },
+              credentials: 'include',
+              body: JSON.stringify(preparedFormData), 
+          });
+        
         if (response.ok) {
             setSubmittedData(preparedFormData);
             setSubmitSuccess(true);
@@ -335,7 +342,8 @@ const updatePassword = (passwordData) => {
             alert(errorData.detail);
             console.error("Server responded with status", response.status);
         }
-        }}
+        }
+      }
     catch (error) {
       console.error("Failed to create new user", error);
       }
@@ -360,6 +368,7 @@ const updatePassword = (passwordData) => {
     </div>
 
       <Form onSubmit={handleSubmit} className="my-form">
+      {!updatePassForm ? <div>
         <Form.Group controlId="username">
           <Form.Label className="bold-label">Username</Form.Label>
           <Form.Control 
@@ -510,7 +519,10 @@ const updatePassword = (passwordData) => {
               checked={formData.music_mentor}
           />
         </Form.Group>
-        {!updatePassForm ? <div><Form.Group controlId="password">
+        </div> : <div></div>}
+        {(!editForm || updatePassForm) && 
+        <>
+          <Form.Group controlId="password">
           <Form.Label className="bold-label">Password</Form.Label>
           <Form.Control 
               type="password"
@@ -530,7 +542,8 @@ const updatePassword = (passwordData) => {
               value={confirmPassword}
           />
           {passwordError && <div className="password-error">{passwordError}</div>}
-        </Form.Group></div> : <div></div>}
+        </Form.Group>
+        </>}
 
         <Button type="submit" className="m-1">
                   Submit

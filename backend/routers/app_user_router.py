@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, Request
 from typing import List
-from queries.app_user_query import AppUserIn, AppUserOut, AppUserRepo
+from queries.app_user_query import AppUserIn, AppUserOut, AppUserRepo, AppUserPassUpdate
 import bcrypt
 from auth_utils.auth_utils import requires_permission, get_current_user, oauth2_scheme, decode_token
 
@@ -93,6 +93,21 @@ def read_app_user(
     current_user: AppUserIn = Depends(get_current_user)
 ):
     result = repo.get_user_by_username(username)
+    if "error" in result:
+        raise HTTPException(status_code=404, detail=result["error"])
+    return result
+
+@router.put("/api/app-users/password/{user_id}", response_model=AppUserOut)
+@requires_permission("update", "app-user")
+def update_app_user(
+    request: Request,
+    user_id: int,
+    user: AppUserPassUpdate,
+    repo: AppUserRepo = Depends(AppUserRepo),
+    current_user: AppUserIn = Depends(get_current_user)
+):
+    user.password = hash_password(user.password)
+    result = repo.update_user_pass(user_id, user)
     if "error" in result:
         raise HTTPException(status_code=404, detail=result["error"])
     return result
