@@ -3,4 +3,29 @@ met with the management to talk about the database and the type of project that 
 
 9.5.2023
 worked on excalidraw and mapped out the bare bones of the project. See below: 
-![backend wireframe](pictures/UFOMT.png)
+
+
+11.7.2023
+I worked a lot the past month. I was able to set up the frontend and backend.
+I set up routers for all of the endpoints and protected the relevant endpoints with authorization.
+For the past month I've been learning how to deploy the application using AWS. I've now set up the 
+application by using ECS Fargate and made it available using a load balancer. Today I updated the 
+wire frame image. I also was able to finish the set up for the load balancer and I will be looking
+into getting a top level domain name (TLDN) for an SSL certification and then update the HTTP to 
+HTTPS.
+
+11.10.2023
+I was able to fully deploy the FormSubmission table on AWS and will be working on the rest of the 
+pages. I will start to work on wire framing what I think the pages should look like and then run 
+them by Pam. 
+
+11.14.2023 I have been able to update the authorization to http cookies only. Now the site can be
+refreshed and the authorization will persist. I've updated and protected each of the sites and now
+only the FormSubmission will be available to unauthorized users (apart from the login page).
+
+
+11.16.2023
+Yesterday I got sick... Today my docker program failed and spent the first half of today trying to 
+get that back up and running. It's working now!
+I've been able to setup the authContext file. The user data and info are correctly loaded. 
+I'm going to focus on just building the crud components for each table. 

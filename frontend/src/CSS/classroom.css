@@ -1,0 +1,11 @@
+.mentor-search-dropdown .dropdown-item {
+    padding: 5px 10px;
+    font-size: 20px;
+    color: #000000dc;
+    background-color: rgb(255, 255, 255)
+  }
+  
+  .mentor-search-dropdown .dropdown-item:hover {
+    background-color: #f7f2f2;
+  }
+  
